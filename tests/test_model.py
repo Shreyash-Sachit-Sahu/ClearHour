@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 from synthetic import make_synthetic
 
 from clearhour import meteo
@@ -17,6 +18,20 @@ def test_open_meteo_utc_hours_line_up_with_ist_rows(monkeypatch):
     hourly, _ = make_synthetic(n_stations=1, end="2025-10-14")
     rows = build_rows(hourly, met, pd.date_range("2025-10-10", "2025-10-11", freq="D", tz=IST))
     assert not rows.empty and rows[["cams_t", "temp_t", "blh_t"]].notna().all().all()
+
+
+def test_build_rows_rejects_off_hour_met():
+    hourly, met = make_synthetic(n_stations=1, end="2025-10-10")
+    met.index = met.index + pd.Timedelta(minutes=30)
+    with pytest.raises(ValueError, match="met index"):
+        build_rows(hourly, met, pd.date_range("2025-10-05", periods=2, freq="D", tz=IST))
+
+
+def test_build_rows_rejects_off_hour_readings():
+    hourly, met = make_synthetic(n_stations=1, end="2025-10-10")
+    hourly = hourly.assign(hour_ist=hourly["hour_ist"] + pd.Timedelta(minutes=30))
+    with pytest.raises(ValueError, match="hour_ist"):
+        build_rows(hourly, met, pd.date_range("2025-10-05", periods=2, freq="D", tz=IST))
 
 
 def test_rows_have_every_feature_and_sane_leads():

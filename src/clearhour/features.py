@@ -39,6 +39,13 @@ def _nanmean(a: np.ndarray) -> float:
     return float(a.mean()) if a.size else float("nan")
 
 
+def _require_on_the_hour(ts: pd.DatetimeIndex, name: str) -> None:
+    """The lookups below go by exact hour, so an off-hour timestamp would silently become a NaN feature."""
+    off = ts[ts.minute != 0]
+    if len(off):
+        raise ValueError(f"{name}: {len(off)} timestamps are not on the hour, e.g. {off[0]}")
+
+
 def build_rows(hourly: pd.DataFrame, met: pd.DataFrame, days) -> pd.DataFrame:
     """Feature rows for each station x day x school hour.
 
@@ -48,6 +55,8 @@ def build_rows(hourly: pd.DataFrame, met: pd.DataFrame, days) -> pd.DataFrame:
     """
     if hourly.empty:
         return pd.DataFrame(columns=["day", "target", *FEATURES])
+    _require_on_the_hour(met.index, "met index")
+    _require_on_the_hour(pd.DatetimeIndex(hourly["hour_ist"]), 'hourly["hour_ist"]')
     wide = hourly.pivot_table(index="hour_ist", columns="location_id", values="pm25", aggfunc="mean")
     start = min(wide.index.min(), *days) - pd.Timedelta(days=2)
     end = max(wide.index.max(), *days) + pd.Timedelta(days=1)
