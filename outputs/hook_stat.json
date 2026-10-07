@@ -1,0 +1,76 @@
+{
+  "nov_dec_2025": {
+    "from": "2025-11-01",
+    "to": "2025-12-31",
+    "weekdays_only": true,
+    "n_stations": 48,
+    "assembly_hour_ist": "08:00-09:00",
+    "assembly_pm25": 222.9,
+    "cleanest_school_hour_ist": "13:00-14:00",
+    "cleanest_pm25": 153.5,
+    "cut_pct": 31.1,
+    "assembly_vs_cleanest_ratio": 1.45
+  },
+  "day_level_nov_dec_2025": {
+    "from": "2025-11-01",
+    "to": "2025-12-31",
+    "weekdays_only": true,
+    "stations": 48,
+    "station_days": 1541,
+    "median_cut_day_pct": 34.7,
+    "share_cut_day_ge_20pct": 0.67,
+    "share_cleanest_hour_12_or_13": 0.722
+  },
+  "us_embassy_8118": {
+    "timestamp_convention": "START (AirNow; checked on 2023-11-14, 23/23 rows)",
+    "years": {
+      "2022": {
+        "from": "2022-11-01",
+        "to": "2022-12-31",
+        "assembly_hour_ist": "08:00-09:00",
+        "assembly_pm25": 183.1,
+        "cleanest_school_hour_ist": "13:00-14:00",
+        "cleanest_pm25": 139.3,
+        "cut_pct": 23.9,
+        "assembly_vs_cleanest_ratio": 1.31,
+        "missing_school_hours": []
+      },
+      "2023": {
+        "from": "2023-11-04",
+        "to": "2023-12-31",
+        "assembly_hour_ist": "08:00-09:00",
+        "assembly_pm25": 248.3,
+        "cleanest_school_hour_ist": "13:00-14:00",
+        "cleanest_pm25": 165.9,
+        "cut_pct": 33.2,
+        "assembly_vs_cleanest_ratio": 1.5,
+        "missing_school_hours": [
+          11
+        ],
+        "note": "starts 4 Nov: 1-3 Nov 2023 carries two interleaved series at this monitor. 11:00 IST has readings on only 2 days, so the cleanest hour is taken over the other five school hours (the cut is a lower bound)."
+      },
+      "2024": {
+        "from": "2024-11-01",
+        "to": "2024-12-31",
+        "assembly_hour_ist": "08:00-09:00",
+        "assembly_pm25": 231.6,
+        "cleanest_school_hour_ist": "13:00-14:00",
+        "cleanest_pm25": 189.4,
+        "cut_pct": 18.2,
+        "assembly_vs_cleanest_ratio": 1.22,
+        "missing_school_hours": []
+      },
+      "2025": {
+        "from": "2025-11-01",
+        "to": "2025-12-31",
+        "assembly_hour_ist": "08:00-09:00",
+        "assembly_pm25": 221.5,
+        "cleanest_school_hour_ist": "13:00-14:00",
+        "cleanest_pm25": 151.8,
+        "cut_pct": 31.5,
+        "assembly_vs_cleanest_ratio": 1.46,
+        "missing_school_hours": []
+      }
+    }
+  }
+}

@@ -53,10 +53,10 @@ def draw(profile: pd.Series, nums: dict, n_stations: int, period: str, out: Path
     ax.annotate(
         f"Cleanest school hour, {_clock(best)}–{_clock(best + 1)}\n{b_val:.0f} µg/m³",
         (best + 0.5, b_val),
-        xytext=(14, 12),
+        xytext=(-14, -16),  # below-left: the evening rise runs through the space right of the afternoon dip
         textcoords="offset points",
-        ha="left",
-        va="bottom",
+        ha="right",
+        va="top",
         fontsize=9,
         color=INK,
     )

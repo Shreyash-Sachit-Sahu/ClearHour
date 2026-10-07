@@ -9,3 +9,6 @@
 - 2026-10-08: Timestamp convention is set per provider in scripts/config.py: CPCB END, caaqm END (station 7044, 2022-10-12, 16/16 rows), AirNow START. Stations of an unchecked provider are skipped with a warning, never defaulted (StateAir, which has no data in our months).
 - 2026-10-08: The pull bins all of a station's months in one to_hourly call, not per station-month: with 8118 on START, the 1 Nov 2023 00:00 hour had readings in both the October and November files. pull_archive.py --cached rebuilds from data/raw without listing S3.
 - 2026-10-08: From 1 Oct to 3 Nov 2023, 8118 carries two interleaved series (stamps at :00 and :30 IST, one sensor id); its hours there average both. Its -999 missing-value rows are dropped by to_hourly.
+- 2026-10-08: hook_chart puts the cleanest-hour label below-left of its marker: on the real Nov-Dec 2025 profile the evening rise ran through it (layout only).
+- 2026-10-08: T6 day-level stats take every weekday station-day with all six school hours, with no station coverage filter (48 stations, 1,541 station-days).
+- 2026-10-08: T6 item 3: 8118 has 11:00 IST readings on only 2 days of Nov-Dec 2023, so its 2023 cleanest hour is taken over the other five school hours (the cut is a lower bound); hook_stat.json records it.
