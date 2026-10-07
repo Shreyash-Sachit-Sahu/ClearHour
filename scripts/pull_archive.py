@@ -15,6 +15,7 @@ RAW = Path("data/raw")
 OUT = Path("data/processed/pm25_hourly.parquet")
 COVERAGE = Path("outputs/coverage.csv")
 WINTERS = [2022, 2023, 2024, 2025]  # October of this year to January of the next
+MONTHS = [(y, m) for w in WINTERS for y, m in ((w, 10), (w, 11), (w, 12), (w + 1, 1))] + [(2026, 2), (2026, 10)]
 
 
 def label(winter: int) -> str:
@@ -31,16 +32,15 @@ def pull(stations: pd.DataFrame) -> tuple[pd.DataFrame, int, int]:
     with ThreadPoolExecutor(max_workers=16) as pool:
         for st in stations.itertuples():
             before = files
-            for winter in WINTERS:
-                for year, month in [(winter, 10), (winter, 11), (winter, 12), (winter + 1, 1)]:
-                    keys = list_month_keys(st.location_id, year, month)
-                    if not keys:
-                        empty += 1
-                        continue
-                    paths = list(pool.map(lambda k: fetch(k, RAW), keys))
-                    files += len(paths)
-                    readings = pd.concat([read_pm25(p) for p in paths], ignore_index=True)
-                    frames.append(to_hourly(readings, stamped_at_end=STAMPED_AT_END))
+            for year, month in MONTHS:
+                keys = list_month_keys(st.location_id, year, month)
+                if not keys:
+                    empty += 1
+                    continue
+                paths = list(pool.map(lambda k: fetch(k, RAW), keys))
+                files += len(paths)
+                readings = pd.concat([read_pm25(p) for p in paths], ignore_index=True)
+                frames.append(to_hourly(readings, stamped_at_end=STAMPED_AT_END))
             print(f"  {st.location_id:>8}  {st.name[:45]:<45} {files - before:>5} files")
     hourly = pd.concat(frames, ignore_index=True)
     assert not hourly.duplicated(["location_id", "hour_utc"]).any(), "an hour bin straddles two month files"
@@ -71,7 +71,7 @@ def coverage(hourly: pd.DataFrame, stations: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     stations = pd.read_csv("data/stations.csv")
-    print(f"Pulling {len(stations)} stations x {len(WINTERS) * 4} months (stamped_at_end={STAMPED_AT_END})")
+    print(f"Pulling {len(stations)} stations x {len(MONTHS)} months (stamped_at_end={STAMPED_AT_END})")
     hourly, files, empty = pull(stations)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     hourly.to_parquet(OUT, index=False)
