@@ -37,7 +37,8 @@ def fetch(start_date: str, end_date: str, *, live: bool = False) -> pd.DataFrame
     weather = _hourly(WEATHER_LIVE if live else WEATHER_ARCHIVE, {**base, "hourly": ",".join(WEATHER_VARS)})
     aq = _hourly(AIR_QUALITY, {**base, "hourly": "pm2_5", "domains": "cams_global"})
     met = weather.join(aq, how="outer")
-    met.index = met.index.tz_convert("Asia/Kolkata")
+    # Open-Meteo hours are UTC, i.e. :30 IST, the middle of an IST hour: label each with the IST hour it falls in
+    met.index = met.index.tz_convert("Asia/Kolkata").floor("h")
     for col in [*WEATHER_VARS, "pm2_5"]:
         if col not in met:
             met[col] = float("nan")

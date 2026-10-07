@@ -1,10 +1,22 @@
 import pandas as pd
 from synthetic import make_synthetic
 
+from clearhour import meteo
 from clearhour.features import FEATURES, MET_COLUMNS, build_rows
 from clearhour.model import evaluate, walk_forward, with_station_category
 
 IST = "Asia/Kolkata"
+
+
+def test_open_meteo_utc_hours_line_up_with_ist_rows(monkeypatch):
+    # Open-Meteo's hours are UTC, i.e. :30 IST; unless fetch labels them with IST hours, every met feature is NaN
+    utc = pd.date_range("2025-10-08", "2025-10-13", freq="h", tz="UTC")
+    fake = lambda url, params: pd.DataFrame({c: 1.0 for c in params["hourly"].split(",")}, index=utc)  # noqa: E731
+    monkeypatch.setattr(meteo, "_hourly", fake)
+    met = meteo.fetch("2025-10-08", "2025-10-12")
+    hourly, _ = make_synthetic(n_stations=1, end="2025-10-14")
+    rows = build_rows(hourly, met, pd.date_range("2025-10-10", "2025-10-11", freq="D", tz=IST))
+    assert not rows.empty and rows[["cams_t", "temp_t", "blh_t"]].notna().all().all()
 
 
 def test_rows_have_every_feature_and_sane_leads():
