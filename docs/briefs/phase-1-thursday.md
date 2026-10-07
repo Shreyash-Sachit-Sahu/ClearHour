@@ -756,4 +756,6 @@ Nov–Dec 2024 has no station data, so the 2024 cross-check is replaced. Write e
 3. Multi-year shape at the US Embassy monitor (8118), Nov–Dec of 2022–2025, using 8118's own timestamp
    verdict in to_hourly. Per year: weekday_profile for that station alone, then hook_numbers. If 8118's
    verdict wasn't clear, skip this item and log why.
+   Amended 8 Oct, 01:56: for 2023 use 4 Nov to 31 Dec, because 1–3 Nov carries two interleaved series at
+   8118. Record that in hook_stat.json. (pm25_hourly.parquet already bins 8118 with its START verdict.)
 Check: print all of it. If the median cut_day is 5% or less, stop and show me.
