@@ -40,6 +40,9 @@ safe hour it says so. A dashboard shows which schools are at risk and which have
 - pandas 3: Copy-on-Write is the default, so never rely on chained assignment.
 - Infrastructure: AWS SAM, `template.yaml` at the repo root. No CDK, no Terraform.
 - Lambda architecture: x86_64 (the dev machine is x86, so container builds need no emulation).
+- Lambda packaging: zip functions use CodeUri `src/` and may import only the standard library, boto3 and the
+  dependency-free modules (`constants`, `decide`, `store`, `whatsapp`). Anything that needs pandas or LightGBM
+  runs in the Forecast container image.
 - Dashboard (Saturday): static site, Vite + MapLibre, Node 24, on Amplify Hosting.
 
 ## Repo layout
@@ -127,6 +130,6 @@ uv run pytest -q
 uv run ruff check --fix && uv run ruff format
 uv run --env-file .env scripts/<name>.py
 uv run cfn-lint template.yaml
-sam build && sam deploy            # first time: sam deploy --guided
+./scripts/deploy.sh      # never `sam deploy --guided` again: it saves parameter values, including the API key, into samconfig.toml
 sam remote invoke <Function> --stack-name clearhour
 ```
