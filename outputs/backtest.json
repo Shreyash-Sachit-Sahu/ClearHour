@@ -166,6 +166,17 @@
       "worse_than_assembly": 0.272
     },
     {
+      "strategy": "clearhour",
+      "station_days": 1956,
+      "hit_rate_top2": 0.671,
+      "median_cut": 0.176,
+      "mean_cut": 0.127,
+      "pooled_cut": 0.25,
+      "pm25_at_pick": 151.1,
+      "pm25_at_assembly": 201.5,
+      "worse_than_assembly": 0.29
+    },
+    {
       "strategy": "cams",
       "station_days": 1956,
       "hit_rate_top2": 0.623,
@@ -214,6 +225,23 @@
     }
   },
   "kinds": {
+    "fine": {
+      "fine": 48,
+      "clear_hour": 61,
+      "no_window": 0
+    },
+    "clear_hour": {
+      "fine": 33,
+      "clear_hour": 1699,
+      "no_window": 48
+    },
+    "no_window": {
+      "fine": 0,
+      "clear_hour": 53,
+      "no_window": 14
+    }
+  },
+  "kinds_forecast_only": {
     "fine": {
       "fine": 48,
       "clear_hour": 81,
@@ -315,6 +343,17 @@
         "worse_than_assembly": 0.2
       },
       {
+        "strategy": "clearhour",
+        "station_days": 80,
+        "hit_rate_top2": 0.625,
+        "median_cut": 0.181,
+        "mean_cut": 0.141,
+        "pooled_cut": 0.192,
+        "pm25_at_pick": 56.0,
+        "pm25_at_assembly": 69.3,
+        "worse_than_assembly": 0.2
+      },
+      {
         "strategy": "cams",
         "station_days": 80,
         "hit_rate_top2": 0.637,
@@ -363,6 +402,23 @@
       }
     },
     "kinds": {
+      "fine": {
+        "fine": 47,
+        "clear_hour": 4,
+        "no_window": 0
+      },
+      "clear_hour": {
+        "fine": 17,
+        "clear_hour": 12,
+        "no_window": 0
+      },
+      "no_window": {
+        "fine": 0,
+        "clear_hour": 0,
+        "no_window": 0
+      }
+    },
+    "kinds_forecast_only": {
       "fine": {
         "fine": 47,
         "clear_hour": 4,

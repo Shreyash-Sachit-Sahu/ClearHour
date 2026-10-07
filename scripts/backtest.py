@@ -27,18 +27,31 @@ ASSEMBLY_COL = TARGET_HOURS.index(ASSEMBLY_HOUR)
 
 def school_day_matrix(pred: pd.DataFrame) -> dict[str, np.ndarray]:
     """The station-days evaluate() scores (Mon-Fri, all six school hours observed), as arrays with one row per
-    station-day and one column per school hour 08..13: the actual value, the model forecast and CAMS."""
+    station-day and one column per school hour 08..13: the actual value, the model forecast and CAMS.
+    "v_last" is one value per station-day: the latest reading the forecast started from."""
+    cols = ["target", "pred", "cams_t", "v_last"]
     ok = pred[pred["target"].notna() & (pred["day"].dt.dayofweek < 5)]
     size = ok.groupby(["location_id", "day"], observed=True)["target"].transform("size")
     full = ok[size == len(TARGET_HOURS)]
-    wide = full.set_index(["location_id", "day", "target_hour"])[["target", "pred", "cams_t"]].unstack("target_hour")
-    return {c: wide[c][TARGET_HOURS].to_numpy(dtype=float) for c in ("target", "pred", "cams_t")}
+    wide = full.set_index(["location_id", "day", "target_hour"])[cols].unstack("target_hour")
+    m = {c: wide[c][TARGET_HOURS].to_numpy(dtype=float) for c in cols}
+    m["v_last"] = m["v_last"][:, ASSEMBLY_COL]
+    return m
+
+
+def rule_decisions(m: dict[str, np.ndarray], use_latest: bool = True) -> list[dict]:
+    """The production rule (clearhour.decide) on each station-day's forecast, with or without the latest reading."""
+    return [
+        decide(dict(zip(TARGET_HOURS, row, strict=True)), latest=float(now) if use_latest else None)
+        for row, now in zip(m["pred"], m["v_last"], strict=True)
+    ]
 
 
 def strategy_table(pred: pd.DataFrame) -> pd.DataFrame:
     """Score each way of choosing the outdoor hour on the PM2.5 that actually occurred at the chosen hour.
 
     oracle is the cleanest school hour in hindsight; model and cams take the hour their forecast calls cleanest.
+    clearhour is what the production rule names (on fine and no-window days, which name no hour, the model's pick).
     cut = 1 - PM2.5 at the chosen hour / PM2.5 at assembly (08:00), per station-day. pooled_cut = 1 - mean PM2.5
     at the chosen hour / mean PM2.5 at assembly, so the smoggiest days count the most.
     """
@@ -48,9 +61,17 @@ def strategy_table(pred: pd.DataFrame) -> pd.DataFrame:
     if n == 0:
         return pd.DataFrame()
     every_day = np.ones(n, dtype=bool)
+    model_pick = np.argmin(m["pred"], axis=1)
+    rule_pick = np.array(
+        [
+            TARGET_HOURS.index(d["clear_hour"]) if d["clear_hour"] is not None else p
+            for d, p in zip(rule_decisions(m), model_pick, strict=True)
+        ]
+    )
     choices = {
         "oracle": (np.argmin(actual, axis=1), every_day),
-        "model": (np.argmin(m["pred"], axis=1), every_day),
+        "model": (model_pick, every_day),
+        "clearhour": (rule_pick, every_day),
         "cams": (np.argmin(np.where(np.isnan(cams), np.inf, cams), axis=1), ~np.isnan(cams).any(axis=1)),
         "always_12": (np.full(n, TARGET_HOURS.index(12)), every_day),
         "always_13": (np.full(n, TARGET_HOURS.index(13)), every_day),
@@ -59,6 +80,8 @@ def strategy_table(pred: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for name, (pick, valid) in choices.items():
         i = np.flatnonzero(valid)
+        if i.size == 0:
+            continue
         got, assembly = actual[i, pick[i]], actual[i, ASSEMBLY_COL]
         pos = assembly > 0
         cut = 1 - got[pos] / assembly[pos]
@@ -98,16 +121,14 @@ def assembly_flag(pred: pd.DataFrame) -> dict:
     return out
 
 
-def kind_table(pred: pd.DataFrame) -> dict:
-    """Station-days by the kind of day the model called (outer keys) and the kind the air turned out to be (inner)."""
+def kind_table(pred: pd.DataFrame, use_latest: bool = True) -> dict:
+    """Station-days by the kind of day the rule called (outer keys) and the kind the air turned out to be (inner)."""
     m = school_day_matrix(pred)
-
-    def kinds(values: np.ndarray) -> list[str]:
-        return [decide(dict(zip(TARGET_HOURS, row, strict=True)))["kind"] for row in values]
-
-    table = pd.crosstab(pd.Series(kinds(m["pred"]), name="called"), pd.Series(kinds(m["target"]), name="actual"))
+    called = [d["kind"] for d in rule_decisions(m, use_latest)]
+    actual = [decide(dict(zip(TARGET_HOURS, row, strict=True)))["kind"] for row in m["target"]]
+    table = pd.crosstab(pd.Series(called, name="called"), pd.Series(actual, name="actual"))
     table = table.reindex(index=KINDS, columns=KINDS, fill_value=0)
-    return {called: {actual: int(table.loc[called, actual]) for actual in KINDS} for called in KINDS}
+    return {c: {a: int(table.loc[c, a]) for a in KINDS} for c in KINDS}
 
 
 def decision_scores(pred: pd.DataFrame) -> dict:
@@ -115,6 +136,7 @@ def decision_scores(pred: pd.DataFrame) -> dict:
         "strategies": strategy_table(pred).to_dict(orient="records"),
         "assembly_flag": assembly_flag(pred),
         "kinds": kind_table(pred),
+        "kinds_forecast_only": kind_table(pred, use_latest=False),
     }
 
 
@@ -152,8 +174,10 @@ def print_scores(label: str, res: dict) -> None:
     )
     for name in ("model", "persistence"):
         print(f"  {name:<11} {flag[name]}")
-    print("kinds (rows: called by the model, columns: what the air turned out to be):")
-    print(pd.DataFrame(res["kinds"]).T.reindex(index=KINDS, columns=KINDS).to_string())
+    tables = {"production rule": res["kinds"], "forecast only": res["kinds_forecast_only"]}
+    print("kinds (rows: called, columns: what the air turned out to be):")
+    both = pd.concat({k: pd.DataFrame(v).T.reindex(index=KINDS, columns=KINDS) for k, v in tables.items()}, axis=1)
+    print(both.to_string())
 
 
 def main() -> None:
@@ -210,6 +234,9 @@ def main() -> None:
         stops.append("the model's MAE is not below yesterday-same-hour's")
     if hit["model"] < hit["always_13"] + 0.02:
         stops.append("the model's hit rate is less than 0.02 above always_13's")
+    pooled = pd.DataFrame(res["strategies"]).set_index("strategy")["pooled_cut"]
+    if pooled["clearhour"] < pooled["model"] - 0.01:
+        stops.append("the production rule's pooled cut is more than 0.01 below the model's")
     if stops:
         raise SystemExit("STOP: " + "; ".join(stops))
 
