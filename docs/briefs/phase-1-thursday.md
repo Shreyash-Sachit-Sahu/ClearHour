@@ -745,3 +745,15 @@ WhatsApp: number <status>; templates en <status>, hi <status>
 Failures (verbatim): <...>
 DECISIONS.md: <new lines>
 ```
+
+## T6 (revised 8 Oct, 01:10): Hook stat on 2025–26 data
+Nov–Dec 2024 has no station data, so the 2024 cross-check is replaced. Write everything to outputs/hook_stat.json.
+1. Nov–Dec 2025 profile, hook numbers and chart, as in the original T6.
+2. Day-level consistency, Nov–Dec 2025, weekdays only, station-days with all six school hours present:
+   - cut_day = (PM2.5 at 08:00 − lowest of 08:00–13:00) / PM2.5 at 08:00
+   - report the station-day count, the median cut_day, and the share of station-days with cut_day ≥ 20%
+   - report the share of station-days whose cleanest school hour is 12:00 or 13:00
+3. Multi-year shape at the US Embassy monitor (8118), Nov–Dec of 2022–2025, using 8118's own timestamp
+   verdict in to_hourly. Per year: weekday_profile for that station alone, then hook_numbers. If 8118's
+   verdict wasn't clear, skip this item and log why.
+Check: print all of it. If the median cut_day is 5% or less, stop and show me.
