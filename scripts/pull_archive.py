@@ -84,6 +84,8 @@ def main() -> None:
     print(f"Pulling {len(stations)} stations x {len(MONTHS)} months from {source}; stamped_at_end: {STAMPED_AT_END}")
     hourly, files, empty = pull(stations, cached)
     OUT.parent.mkdir(parents=True, exist_ok=True)
+    # Pin µs: binning yields ns or µs depending on the stations, and later joins (Open-Meteo, the model) must not mix.
+    hourly = hourly.assign(hour_utc=hourly["hour_utc"].dt.as_unit("us"), hour_ist=hourly["hour_ist"].dt.as_unit("us"))
     hourly.to_parquet(OUT, index=False)
     cov = coverage(hourly, stations)
     COVERAGE.parent.mkdir(parents=True, exist_ok=True)
