@@ -77,14 +77,17 @@ def handler(event, context):
     rows["location_id"] = pd.Categorical(rows["location_id"], categories=meta["stations"])
     rows["pred"] = np.expm1(booster.predict(rows[features.FEATURES]))
     preds: dict[str, dict[str, float]] = {}
+    latest: dict[str, float] = {}  # each station's newest reading at or before 04:00 IST (v_last)
     for r in rows.itertuples():
         preds.setdefault(str(r.location_id), {})[str(r.target_hour)] = round(float(r.pred), 1)
+        latest[str(r.location_id)] = round(float(r.v_last), 1)
     body = {
         "day": str(day.date()),
         "source": source,
         "generated_at": pd.Timestamp.now(tz=IST).isoformat(timespec="seconds"),
         "median_lead_h": float(rows["lead_h"].median()),
         "stations": preds,
+        "latest": latest,
     }
     key = f"runs/{day.date()}/{source}/forecast.json"
     _s3.put_object(

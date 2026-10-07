@@ -41,6 +41,13 @@ def school_hourly(school: dict, preds: dict[str, dict[str, float]]) -> dict[int,
     return out
 
 
+def school_latest(school: dict, latest: dict[str, float]) -> float | None:
+    """The newest measured PM2.5 near the school, blended with the same weights; None if no station has one."""
+    pairs = [(w, latest[str(sid)]) for sid, w in school["near"] if str(sid) in latest]
+    total = sum(w for w, _ in pairs)
+    return sum(w * v for w, v in pairs) / total if total else None
+
+
 def handler(event, context):
     bucket = os.environ["DATA_BUCKET"]
     fc = json.loads(_s3.get_object(Bucket=bucket, Key=event["forecast_key"])["Body"].read())
@@ -50,11 +57,13 @@ def handler(event, context):
     for sch in schools():
         hourly = school_hourly(sch, fc["stations"])
         if hourly:
+            now = school_latest(sch, fc.get("latest", {}))
             decisions[sch["id"]] = {
-                **rules.decide(hourly),
+                **rules.decide(hourly, latest=now),
                 "name": sch["name"],
                 "lat": sch["lat"],
                 "lon": sch["lon"],
+                "latest": None if now is None else round(now, 1),
                 "hourly": {str(h): round(v, 1) for h, v in hourly.items()},
             }
     decisions_key = event["forecast_key"].replace("forecast.json", "decisions.json")

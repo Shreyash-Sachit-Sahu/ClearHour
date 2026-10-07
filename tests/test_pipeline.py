@@ -85,6 +85,8 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     forecast = _seed_model_and_obs(monkeypatch, day)
     out = forecast.handler({"source": "live", "as_of": "2025-11-13T05:30:00+05:30"}, None)
     assert out["stations"] == 3 and out["forecast_key"] == "runs/2025-11-13/live/forecast.json"
+    fc = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=out["forecast_key"])["Body"].read())
+    assert set(fc["latest"]) == set(fc["stations"])  # every forecast station carries its latest reading
 
     store.table().put_item(
         Item={"pk": "SCHOOL#node/1", "sk": "PROFILE", "name": "सर्वोदय विद्यालय", "phone": "919999999999", "lang": "hi"}
@@ -93,6 +95,8 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     monkeypatch.setattr(decide, "schools", lambda: SCHOOLS)
     res = decide.handler(out, None)
     assert res["schools"] == 1  # the far school has no station forecast
+    decisions = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=res["decisions_key"])["Body"].read())
+    assert decisions["node/1"]["latest"] is not None
     assert res["alerts"] == [{"school_id": "node/1", "day": "2025-11-13"}]
     alert = store.get_alert("node/1", "2025-11-13")
     assert alert["status"] == "pending" and alert["params"][1] == "गुरु 13 नवंबर"
