@@ -1,0 +1,6 @@
+name,osm_id,lat,lon,station_id,station_name,distance_km
+"Kendriya Vidyalaya, RK Puram, Sector-2",way/295816372,28.56249,77.1860721,17,"R K Puram, Delhi - DPCC",0.12
+Government school,node/4934333224,28.7369367,77.126039,10831,"Rohini, Delhi - DPCC",0.77
+Govt Boys Senior Secondary School,node/9086006380,28.6807704,77.3127674,6938,"Vivek Vihar, Delhi - DPCC",0.97
+Government SChool,node/4778391814,28.5611545,77.0591164,6931,"Dwarka-Sector 8, Delhi - DPCC",1.66
+Government Boys Senior Secondary School,way/510336782,28.5895731,77.3023335,6980,"Sector-1, Noida - UPPCB",1.92
