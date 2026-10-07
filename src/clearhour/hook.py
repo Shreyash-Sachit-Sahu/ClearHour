@@ -9,9 +9,7 @@ SCHOOL_HOURS = list(range(8, 14))  # hour-beginning bins, 08:00 to 13:00 IST
 ASSEMBLY_HOUR = 8  # the 08:00-09:00 IST hour
 
 
-def weekday_profile(
-    hourly: pd.DataFrame, start: str, end: str, *, min_coverage: float = 0.6
-) -> tuple[pd.Series, int]:
+def weekday_profile(hourly: pd.DataFrame, start: str, end: str, *, min_coverage: float = 0.6) -> tuple[pd.Series, int]:
     """Mean PM2.5 by IST hour of day over Mon-Fri in [start, end), each station weighted equally.
 
     Stations with less than min_coverage of the window's weekday hours are left out.

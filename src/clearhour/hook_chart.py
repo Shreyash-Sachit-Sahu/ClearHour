@@ -42,13 +42,23 @@ def draw(profile: pd.Series, nums: dict, n_stations: int, period: str, out: Path
     a_val, b_val = float(profile.loc[ASSEMBLY_HOUR]), float(profile.loc[best])
     ax.annotate(
         f"Assembly, {_clock(ASSEMBLY_HOUR)}–{_clock(ASSEMBLY_HOUR + 1)}\n{a_val:.0f} µg/m³",
-        (ASSEMBLY_HOUR + 0.5, a_val), xytext=(-14, 10), textcoords="offset points",
-        ha="right", va="bottom", fontsize=9, color=INK,
+        (ASSEMBLY_HOUR + 0.5, a_val),
+        xytext=(-14, 10),
+        textcoords="offset points",
+        ha="right",
+        va="bottom",
+        fontsize=9,
+        color=INK,
     )
     ax.annotate(
         f"Cleanest school hour, {_clock(best)}–{_clock(best + 1)}\n{b_val:.0f} µg/m³",
-        (best + 0.5, b_val), xytext=(14, 12), textcoords="offset points",
-        ha="left", va="bottom", fontsize=9, color=INK,
+        (best + 0.5, b_val),
+        xytext=(14, 12),
+        textcoords="offset points",
+        ha="left",
+        va="bottom",
+        fontsize=9,
+        color=INK,
     )
 
     ax.set_xlim(0, 24)
@@ -61,12 +71,30 @@ def draw(profile: pd.Series, nums: dict, n_stations: int, period: str, out: Path
         ax.spines[side].set_visible(False)
     ax.spines["bottom"].set_color(BASELINE)
 
-    fig.text(0.04, 0.95, f"Moving outdoor time from {_clock(ASSEMBLY_HOUR)} to {_clock(best)} cuts PM2.5 by "
-             f"{nums['cut_pct']:.0f}%", fontsize=13, fontweight="semibold", color=INK, va="top")
-    fig.text(0.04, 0.885, f"Mean PM2.5 by hour of day (µg/m³) · {n_stations} Delhi monitors · school days, {period}",
-             fontsize=9, color=INK_2, va="top")
-    fig.text(0.04, 0.03, "Source: Delhi reference monitors via OpenAQ (AWS Open Data). Hourly means, weekdays only.",
-             fontsize=7.5, color=MUTED)
+    fig.text(
+        0.04,
+        0.95,
+        f"Moving outdoor time from {_clock(ASSEMBLY_HOUR)} to {_clock(best)} cuts PM2.5 by {nums['cut_pct']:.0f}%",
+        fontsize=13,
+        fontweight="semibold",
+        color=INK,
+        va="top",
+    )
+    fig.text(
+        0.04,
+        0.885,
+        f"Mean PM2.5 by hour of day (µg/m³) · {n_stations} Delhi monitors · school days, {period}",
+        fontsize=9,
+        color=INK_2,
+        va="top",
+    )
+    fig.text(
+        0.04,
+        0.03,
+        "Source: Delhi reference monitors via OpenAQ (AWS Open Data). Hourly means, weekdays only.",
+        fontsize=7.5,
+        color=MUTED,
+    )
     fig.subplots_adjust(left=0.07, right=0.97, top=0.80, bottom=0.14)
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, facecolor=SURFACE)
