@@ -1,0 +1,78 @@
+import json
+from datetime import date
+
+from clearhour.decide import decide, message_params, slot_label
+from clearhour.handlers.ingest import hourly_means
+from clearhour.whatsapp import parse_sns, template_payload
+
+
+def _hours(*vals):
+    return dict(zip(range(8, 14), vals, strict=True))
+
+
+def test_decision_rule_three_kinds():
+    assert decide(_hours(60, 70, 80, 90, 85, 75))["kind"] == "fine"
+    assert decide(_hours(400, 380, 350, 320, 300, 260))["kind"] == "no_window"
+    d = decide(_hours(300, 260, 220, 180, 150, 160))
+    assert d == {"kind": "clear_hour", "clear_hour": 12, "assembly_indoors": True}
+    assert decide(_hours(110, 100, 95, 92, 91, 140))["assembly_indoors"] is False
+
+
+def test_labels_and_params_in_both_languages():
+    assert slot_label(13, "en") == "1:00–2:00 PM"
+    assert slot_label(11, "en") == "11:00 AM–12:00 PM"
+    assert slot_label(13, "hi") == "दोपहर 1:00–2:00"
+    d = {"kind": "clear_hour", "clear_hour": 13, "assembly_indoors": True}
+    en = message_params(d, "Sarvodaya Vidyalaya", date(2025, 11, 13), "en")
+    assert en == ["Sarvodaya Vidyalaya", "Thu 13 Nov", "Hold assembly indoors.", "1:00–2:00 PM"]
+    hi = message_params(d, "सर्वोदय विद्यालय", date(2025, 11, 13), "hi", replay=True)
+    assert hi == ["सर्वोदय विद्यालय", "गुरु 13 नवंबर (रीप्ले)", "प्रार्थना सभा अंदर करें।", "दोपहर 1:00–2:00"]
+    for p in en + hi:  # WhatsApp rejects template parameters with newlines or tabs
+        assert "\n" not in p and "\t" not in p
+
+
+def test_template_payload_shape():
+    p = template_payload("919999999999", ["a", "b", "c", "d"], name="clearhour_daily_alert", lang="en")
+    assert p["type"] == "template" and p["template"]["language"] == {"code": "en"}
+    assert [x["text"] for x in p["template"]["components"][0]["parameters"]] == ["a", "b", "c", "d"]
+
+
+def test_parse_sns_reads_text_messages_and_ignores_statuses():
+    entry = {
+        "id": "1",
+        "changes": [
+            {
+                "value": {
+                    "messages": [
+                        {
+                            "from": "919999999999",
+                            "id": "wamid.X",
+                            "timestamp": "1",
+                            "type": "text",
+                            "text": {"body": " 1 "},
+                        }
+                    ]
+                }
+            },
+            {"value": {"statuses": [{"id": "wamid.Y", "status": "sent"}]}},
+        ],
+    }
+    event = {"Records": [{"Sns": {"Message": json.dumps({"context": {}, "whatsAppWebhookEntry": json.dumps(entry)})}}]}
+    assert parse_sns(event) == [{"from": "919999999999", "text": "1", "id": "wamid.X", "timestamp": "1"}]
+
+
+def test_ingest_bins_fifteen_minute_periods_by_ist_clock_hour():
+    def m(start_utc, v):
+        return {"value": v, "period": {"datetimeFrom": {"utc": start_utc}}}
+
+    # 08:00-09:00 IST is 02:30-03:30 UTC; a 08:45 IST start (03:15 UTC) belongs to the 08:00 hour
+    res = [
+        m("2025-11-13T02:30:00Z", 100),
+        m("2025-11-13T02:45:00Z", 110),
+        m("2025-11-13T03:15:00Z", 130),
+        m("2025-11-13T03:30:00Z", 50),
+        m("2025-11-13T03:45:00Z", -999),
+    ]
+    out = hourly_means(res)
+    assert out["2025-11-13T02:30:00+00:00"] == (340 / 3, 3)
+    assert out["2025-11-13T03:30:00+00:00"] == (50.0, 1)  # -999 (missing) dropped
