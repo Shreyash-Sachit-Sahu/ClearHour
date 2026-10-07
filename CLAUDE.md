@@ -121,6 +121,8 @@ never double-sends.
 - Every script ends with a one-screen summary: counts, date range, gaps, files written.
 - Scripts are re-runnable: cache downloads, skip work already done.
 - Commit messages are imperative and scoped, e.g. `data: pull OpenAQ archive for Delhi monitors`.
+- Naming: the monitoring data is "Delhi NCR" (the stations include Gurugram, Noida, Ghaziabad and Bahadurgarh,
+  all under the GRAP school orders) in the chart, README and video. The school layer stays "Delhi schools".
 
 ## Commands
 

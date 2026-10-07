@@ -12,3 +12,4 @@
 - 2026-10-08: hook_chart puts the cleanest-hour label below-left of its marker: on the real Nov-Dec 2025 profile the evening rise ran through it (layout only).
 - 2026-10-08: T6 day-level stats take every weekday station-day with all six school hours, with no station coverage filter (48 stations, 1,541 station-days).
 - 2026-10-08: T6 item 3: 8118 has 11:00 IST readings on only 2 days of Nov-Dec 2023, so its 2023 cleanest hour is taken over the other five school hours (the cut is a lower bound); hook_stat.json records it.
+- 2026-10-08: The monitoring data is labelled "Delhi NCR" (7 of the 48 stations in the 2025 profile are in Gurugram, Noida, Ghaziabad and Bahadurgarh; GRAP school orders cover those districts too). Schools stay "Delhi schools".

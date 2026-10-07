@@ -83,7 +83,7 @@ def draw(profile: pd.Series, nums: dict, n_stations: int, period: str, out: Path
     fig.text(
         0.04,
         0.885,
-        f"Mean PM2.5 by hour of day (µg/m³) · {n_stations} Delhi monitors · school days, {period}",
+        f"Mean PM2.5 by hour of day (µg/m³) · {n_stations} Delhi NCR monitors · school days, {period}",
         fontsize=9,
         color=INK_2,
         va="top",
@@ -91,7 +91,7 @@ def draw(profile: pd.Series, nums: dict, n_stations: int, period: str, out: Path
     fig.text(
         0.04,
         0.03,
-        "Source: Delhi reference monitors via OpenAQ (AWS Open Data). Hourly means, weekdays only.",
+        "Source: Delhi NCR reference monitors via OpenAQ (AWS Open Data). Hourly means, weekdays only.",
         fontsize=7.5,
         color=MUTED,
     )
