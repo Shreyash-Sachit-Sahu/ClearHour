@@ -72,6 +72,13 @@ def test_quarter_hour_readings_bin_to_ist_clock_hours():
     assert hourly["n"].iloc[0] == 4 and hourly["pm25"].iloc[0] == 125.0
 
 
+def test_start_stamped_hourly_reading_lands_in_its_own_hour():
+    # The US Embassy monitor (AirNow) stamps each hourly reading at the start of the hour it covers.
+    stamp = pd.Timestamp("2025-11-12 08:00", tz="Asia/Kolkata")
+    readings = pd.DataFrame({"location_id": [8118], "ts_utc": [stamp.tz_convert("UTC")], "value": [150.0]})
+    assert to_hourly(readings, stamped_at_end=False)["hour_ist"].tolist() == [stamp]
+
+
 def test_low_coverage_stations_are_dropped(tmp_path):
     frames = []
     for day in pd.date_range("2025-11-01", "2025-12-31", freq="D"):

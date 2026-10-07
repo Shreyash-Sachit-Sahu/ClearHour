@@ -1,15 +1,17 @@
 """T5: four winters of hourly PM2.5 from the OpenAQ archive.
 
 Writes data/processed/pm25_hourly.parquet and outputs/coverage.csv. Downloads are cached in data/raw/.
+With --cached it rebuilds from data/raw alone, without listing S3.
 """
 
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pandas as pd
 from config import STAMPED_AT_END
 
-from clearhour.archive import IST, fetch, list_month_keys, read_pm25, to_hourly
+from clearhour.archive import IST, fetch, list_month_keys, month_prefix, read_pm25, to_hourly
 
 RAW = Path("data/raw")
 OUT = Path("data/processed/pm25_hourly.parquet")
@@ -26,25 +28,31 @@ def window(winter: int) -> tuple[pd.Timestamp, pd.Timestamp]:
     return pd.Timestamp(f"{winter}-10-01", tz=IST), pd.Timestamp(f"{winter + 1}-02-01", tz=IST)
 
 
-def pull(stations: pd.DataFrame) -> tuple[pd.DataFrame, int, int]:
-    """Hourly frames for every station-month; raw rows live only for one station-month at a time."""
+def cached_keys(location_id: int, year: int, month: int) -> list[str]:
+    return sorted(str(p.relative_to(RAW)) for p in (RAW / month_prefix(location_id, year, month)).glob("*.csv.gz"))
+
+
+def pull(stations: pd.DataFrame, cached: bool) -> tuple[pd.DataFrame, int, int]:
+    """Hourly frames per station. All of a station's months are binned together, so an hour whose readings
+    sit in two month files becomes one mean; raw rows live only for one station at a time."""
     frames, files, empty = [], 0, 0
+    list_keys = cached_keys if cached else list_month_keys
     with ThreadPoolExecutor(max_workers=16) as pool:
         for st in stations.itertuples():
-            before = files
+            if st.provider not in STAMPED_AT_END:
+                print(f"  WARNING: skipped {st.location_id} {st.name}: provider {st.provider!r} not in config.py")
+                continue
+            paths = []
             for year, month in MONTHS:
-                keys = list_month_keys(st.location_id, year, month)
-                if not keys:
-                    empty += 1
-                    continue
-                paths = list(pool.map(lambda k: fetch(k, RAW), keys))
-                files += len(paths)
+                keys = list_keys(st.location_id, year, month)
+                empty += not keys
+                paths += pool.map(lambda k: fetch(k, RAW), keys)
+            files += len(paths)
+            if paths:
                 readings = pd.concat([read_pm25(p) for p in paths], ignore_index=True)
-                frames.append(to_hourly(readings, stamped_at_end=STAMPED_AT_END))
-            print(f"  {st.location_id:>8}  {st.name[:45]:<45} {files - before:>5} files")
-    hourly = pd.concat(frames, ignore_index=True)
-    assert not hourly.duplicated(["location_id", "hour_utc"]).any(), "an hour bin straddles two month files"
-    return hourly, files, empty
+                frames.append(to_hourly(readings, stamped_at_end=STAMPED_AT_END[st.provider]))
+            print(f"  {st.location_id:>8}  {st.name[:45]:<45} {len(paths):>5} files")
+    return pd.concat(frames, ignore_index=True), files, empty
 
 
 def coverage(hourly: pd.DataFrame, stations: pd.DataFrame) -> pd.DataFrame:
@@ -71,8 +79,10 @@ def coverage(hourly: pd.DataFrame, stations: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     stations = pd.read_csv("data/stations.csv")
-    print(f"Pulling {len(stations)} stations x {len(MONTHS)} months (stamped_at_end={STAMPED_AT_END})")
-    hourly, files, empty = pull(stations)
+    cached = "--cached" in sys.argv
+    source = "data/raw only" if cached else "S3, cached in data/raw"
+    print(f"Pulling {len(stations)} stations x {len(MONTHS)} months from {source}; stamped_at_end: {STAMPED_AT_END}")
+    hourly, files, empty = pull(stations, cached)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     hourly.to_parquet(OUT, index=False)
     cov = coverage(hourly, stations)

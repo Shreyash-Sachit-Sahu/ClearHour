@@ -59,7 +59,7 @@ location_id,name,winter,hours,coverage
 6980,"Sector-1, Noida - UPPCB",2022-23,255,0.086
 7005,"Loni, Ghaziabad - UPPCB",2022-23,220,0.075
 7044,"R K Puram, Delhi - DPCC",2022-23,258,0.087
-8118,New Delhi,2022-23,2733,0.926
+8118,New Delhi,2022-23,2732,0.925
 8235,"Jahangirpuri, Delhi - DPCC",2022-23,132,0.045
 8239,"Okhla Phase-2, Delhi - DPCC",2022-23,230,0.078
 8365,"Nehru Nagar, Delhi - DPCC",2022-23,266,0.09
@@ -140,7 +140,7 @@ location_id,name,winter,hours,coverage
 6980,"Sector-1, Noida - UPPCB",2023-24,0,0.0
 7005,"Loni, Ghaziabad - UPPCB",2023-24,0,0.0
 7044,"R K Puram, Delhi - DPCC",2023-24,0,0.0
-8118,New Delhi,2023-24,2840,0.962
+8118,New Delhi,2023-24,2842,0.963
 8235,"Jahangirpuri, Delhi - DPCC",2023-24,0,0.0
 8239,"Okhla Phase-2, Delhi - DPCC",2023-24,0,0.0
 8365,"Nehru Nagar, Delhi - DPCC",2023-24,0,0.0
@@ -221,7 +221,7 @@ location_id,name,winter,hours,coverage
 6980,"Sector-1, Noida - UPPCB",2024-25,0,0.0
 7005,"Loni, Ghaziabad - UPPCB",2024-25,0,0.0
 7044,"R K Puram, Delhi - DPCC",2024-25,0,0.0
-8118,New Delhi,2024-25,2826,0.957
+8118,New Delhi,2024-25,2825,0.957
 8235,"Jahangirpuri, Delhi - DPCC",2024-25,0,0.0
 8239,"Okhla Phase-2, Delhi - DPCC",2024-25,0,0.0
 8365,"Nehru Nagar, Delhi - DPCC",2024-25,0,0.0
@@ -302,7 +302,7 @@ location_id,name,winter,hours,coverage
 6980,"Sector-1, Noida - UPPCB",2025-26,2441,0.827
 7005,"Loni, Ghaziabad - UPPCB",2025-26,2267,0.768
 7044,"R K Puram, Delhi - DPCC",2025-26,0,0.0
-8118,New Delhi,2025-26,2785,0.943
+8118,New Delhi,2025-26,2784,0.943
 8235,"Jahangirpuri, Delhi - DPCC",2025-26,2593,0.878
 8239,"Okhla Phase-2, Delhi - DPCC",2025-26,2538,0.86
 8365,"Nehru Nagar, Delhi - DPCC",2025-26,2595,0.879
