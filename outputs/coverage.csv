@@ -1,0 +1,325 @@
+location_id,name,winter,hours,coverage
+13,"Delhi Technological University, Delhi - CPCB",2022-23,0,0.0
+15,IGI Airport,2022-23,0,0.0
+16,Civil Lines,2022-23,0,0.0
+17,"R K Puram, Delhi - DPCC",2022-23,0,0.0
+50,"Punjabi Bagh, Delhi - DPCC",2022-23,0,0.0
+103,"Income Tax Office, Delhi - CPCB",2022-23,0,0.0
+235,"Anand Vihar, New Delhi - DPCC",2022-23,0,0.0
+236,"Mandir Marg, Delhi - DPCC",2022-23,0,0.0
+301,"Vikas Sadan, Gurugram - HSPCB",2022-23,148,0.05
+431,"IHBAS, Delhi - CPCB",2022-23,0,0.0
+2503,"Shadipur, Delhi - CPCB",2022-23,0,0.0
+2587,"Sector16A, Faridabad - HSPCB",2022-23,0,0.0
+2597,US Diplomatic Post: New Delhi,2022-23,0,0.0
+5404,"Pusa, Delhi - IMD",2022-23,0,0.0
+5509,"Anand Vihar, Delhi - DPCC",2022-23,1,0.0
+5540,"Punjabi Bagh, Delhi - DPCC",2022-23,0,0.0
+5541,"Burari Crossing, New Delhi - IMD",2022-23,0,0.0
+5570,"Aya Nagar, New Delhi - IMD",2022-23,99,0.034
+5581,"Pusa, New Delhi - IMD",2022-23,0,0.0
+5586,"Sirifort, Delhi - CPCB",2022-23,328,0.111
+5598,"Sector - 125, Noida, UP - UPPCB",2022-23,287,0.097
+5610,"North Campus, DU, Delhi - IMD",2022-23,241,0.082
+5613,"ITO, New Delhi - CPCB",2022-23,0,0.0
+5617,"Sector- 16A, Faridabad - HSPCB",2022-23,75,0.025
+5622,"NSIT Dwarka, Delhi - CPCB",2022-23,302,0.102
+5626,"DTU, New Delhi - CPCB",2022-23,326,0.11
+5627,"CRRI Mathura Road, New Delhi - IMD",2022-23,96,0.033
+5630,"Shadipur, Delhi - CPCB",2022-23,337,0.114
+5634,"Lodhi Road, New Delhi - IMD",2022-23,91,0.031
+5639,"R K Puram, New Delhi - DPCC",2022-23,0,0.0
+5641,"Mandir Marg, New Delhi - DPCC",2022-23,0,0.0
+5650,"IGI Airport (T3), Delhi - IMD",2022-23,169,0.057
+5742,"Patparganj, Delhi - DPCC",2022-23,0,0.0
+5743,"Rohini, Delhi - DPCC",2022-23,0,0.0
+5744,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2022-23,0,0.0
+5753,"Vivek Vihar, Delhi - DPCC",2022-23,0,0.0
+5754,"Jawaharlal Nehru Stadium, Delhi - DPCC",2022-23,0,0.0
+5755,"Major Dhyan Chand National Stadium, Delhi - DPCC",2022-23,0,0.0
+5759,"Sonia Vihar, Delhi - DPCC",2022-23,0,0.0
+5761,"Jahangirpuri, Delhi - DPCC",2022-23,0,0.0
+5762,"Ashok Vihar, Delhi - DPCC",2022-23,0,0.0
+5763,"Narela, Delhi - DPCC",2022-23,0,0.0
+5765,"Okhla Phase-2, Delhi - DPCC",2022-23,0,0.0
+5766,"Nehru Nagar, Delhi - DPCC",2022-23,0,0.0
+6314,"NISE Gwal Pahari, Gurugram - IMD",2022-23,0,0.0
+6356,"Pusa, Delhi - DPCC",2022-23,249,0.084
+6357,"Punjabi Bagh, Delhi - DPCC",2022-23,255,0.086
+6358,"Mandir Marg, New Delhi - DPCC",2022-23,284,0.096
+6359,"IHBAS, Dilshad Garden,New Delhi - CPCB",2022-23,194,0.066
+6929,"Major Dhyan Chand National Stadium, Delhi - DPCC",2022-23,276,0.093
+6931,"Dwarka-Sector 8, Delhi - DPCC",2022-23,271,0.092
+6932,"Alipur, Delhi - DPCC",2022-23,170,0.058
+6934,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2022-23,2,0.001
+6936,"Arya Nagar, Bahadurgarh - HSPCB",2022-23,253,0.086
+6938,"Vivek Vihar, Delhi - DPCC",2022-23,293,0.099
+6957,"Jawaharlal Nehru Stadium, Delhi - DPCC",2022-23,236,0.08
+6960,"Patparganj, Delhi - DPCC",2022-23,294,0.1
+6980,"Sector-1, Noida - UPPCB",2022-23,255,0.086
+7005,"Loni, Ghaziabad - UPPCB",2022-23,220,0.075
+7044,"R K Puram, Delhi - DPCC",2022-23,258,0.087
+8118,New Delhi,2022-23,2733,0.926
+8235,"Jahangirpuri, Delhi - DPCC",2022-23,132,0.045
+8239,"Okhla Phase-2, Delhi - DPCC",2022-23,230,0.078
+8365,"Nehru Nagar, Delhi - DPCC",2022-23,266,0.09
+8472,"Bawana, Delhi - DPCC",2022-23,225,0.076
+8475,"Sonia Vihar, Delhi - DPCC",2022-23,266,0.09
+8915,"Wazirpur, Delhi - DPCC",2022-23,283,0.096
+8917,"Ashok Vihar, Delhi - DPCC",2022-23,275,0.093
+10484,"Sri Aurobindo Marg, Delhi - DPCC",2022-23,230,0.078
+10485,"Narela, Delhi - DPCC",2022-23,283,0.096
+10486,"Mundka, Delhi - DPCC",2022-23,240,0.081
+10487,"Anand Vihar, Delhi - DPCC",2022-23,0,0.0
+10488,"Najafgarh, Delhi - DPCC",2022-23,222,0.075
+10489,"ITO, Delhi - CPCB",2022-23,305,0.103
+10820,"Sector 30, Faridabad - HSPCB",2022-23,255,0.086
+10825,"Sector-51, Gurugram - HSPCB",2022-23,270,0.091
+10831,"Rohini, Delhi - DPCC",2022-23,197,0.067
+10900,"Teri Gram, Gurugram - HSPCB",2022-23,290,0.098
+10921,"NISE Gwal Pahari, Gurugram - IMD",2022-23,42,0.014
+11603,"Chandni Chowk, Delhi - IITM",2022-23,0,0.0
+11607,"Lodhi Road, Delhi - IITM",2022-23,0,0.0
+13,"Delhi Technological University, Delhi - CPCB",2023-24,0,0.0
+15,IGI Airport,2023-24,0,0.0
+16,Civil Lines,2023-24,0,0.0
+17,"R K Puram, Delhi - DPCC",2023-24,0,0.0
+50,"Punjabi Bagh, Delhi - DPCC",2023-24,0,0.0
+103,"Income Tax Office, Delhi - CPCB",2023-24,0,0.0
+235,"Anand Vihar, New Delhi - DPCC",2023-24,0,0.0
+236,"Mandir Marg, Delhi - DPCC",2023-24,0,0.0
+301,"Vikas Sadan, Gurugram - HSPCB",2023-24,0,0.0
+431,"IHBAS, Delhi - CPCB",2023-24,0,0.0
+2503,"Shadipur, Delhi - CPCB",2023-24,0,0.0
+2587,"Sector16A, Faridabad - HSPCB",2023-24,0,0.0
+2597,US Diplomatic Post: New Delhi,2023-24,0,0.0
+5404,"Pusa, Delhi - IMD",2023-24,0,0.0
+5509,"Anand Vihar, Delhi - DPCC",2023-24,0,0.0
+5540,"Punjabi Bagh, Delhi - DPCC",2023-24,0,0.0
+5541,"Burari Crossing, New Delhi - IMD",2023-24,0,0.0
+5570,"Aya Nagar, New Delhi - IMD",2023-24,0,0.0
+5581,"Pusa, New Delhi - IMD",2023-24,0,0.0
+5586,"Sirifort, Delhi - CPCB",2023-24,0,0.0
+5598,"Sector - 125, Noida, UP - UPPCB",2023-24,0,0.0
+5610,"North Campus, DU, Delhi - IMD",2023-24,0,0.0
+5613,"ITO, New Delhi - CPCB",2023-24,0,0.0
+5617,"Sector- 16A, Faridabad - HSPCB",2023-24,0,0.0
+5622,"NSIT Dwarka, Delhi - CPCB",2023-24,0,0.0
+5626,"DTU, New Delhi - CPCB",2023-24,0,0.0
+5627,"CRRI Mathura Road, New Delhi - IMD",2023-24,0,0.0
+5630,"Shadipur, Delhi - CPCB",2023-24,0,0.0
+5634,"Lodhi Road, New Delhi - IMD",2023-24,0,0.0
+5639,"R K Puram, New Delhi - DPCC",2023-24,0,0.0
+5641,"Mandir Marg, New Delhi - DPCC",2023-24,0,0.0
+5650,"IGI Airport (T3), Delhi - IMD",2023-24,0,0.0
+5742,"Patparganj, Delhi - DPCC",2023-24,0,0.0
+5743,"Rohini, Delhi - DPCC",2023-24,0,0.0
+5744,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2023-24,0,0.0
+5753,"Vivek Vihar, Delhi - DPCC",2023-24,0,0.0
+5754,"Jawaharlal Nehru Stadium, Delhi - DPCC",2023-24,0,0.0
+5755,"Major Dhyan Chand National Stadium, Delhi - DPCC",2023-24,0,0.0
+5759,"Sonia Vihar, Delhi - DPCC",2023-24,0,0.0
+5761,"Jahangirpuri, Delhi - DPCC",2023-24,0,0.0
+5762,"Ashok Vihar, Delhi - DPCC",2023-24,0,0.0
+5763,"Narela, Delhi - DPCC",2023-24,0,0.0
+5765,"Okhla Phase-2, Delhi - DPCC",2023-24,0,0.0
+5766,"Nehru Nagar, Delhi - DPCC",2023-24,0,0.0
+6314,"NISE Gwal Pahari, Gurugram - IMD",2023-24,0,0.0
+6356,"Pusa, Delhi - DPCC",2023-24,0,0.0
+6357,"Punjabi Bagh, Delhi - DPCC",2023-24,0,0.0
+6358,"Mandir Marg, New Delhi - DPCC",2023-24,0,0.0
+6359,"IHBAS, Dilshad Garden,New Delhi - CPCB",2023-24,0,0.0
+6929,"Major Dhyan Chand National Stadium, Delhi - DPCC",2023-24,0,0.0
+6931,"Dwarka-Sector 8, Delhi - DPCC",2023-24,0,0.0
+6932,"Alipur, Delhi - DPCC",2023-24,0,0.0
+6934,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2023-24,0,0.0
+6936,"Arya Nagar, Bahadurgarh - HSPCB",2023-24,0,0.0
+6938,"Vivek Vihar, Delhi - DPCC",2023-24,0,0.0
+6957,"Jawaharlal Nehru Stadium, Delhi - DPCC",2023-24,0,0.0
+6960,"Patparganj, Delhi - DPCC",2023-24,0,0.0
+6980,"Sector-1, Noida - UPPCB",2023-24,0,0.0
+7005,"Loni, Ghaziabad - UPPCB",2023-24,0,0.0
+7044,"R K Puram, Delhi - DPCC",2023-24,0,0.0
+8118,New Delhi,2023-24,2840,0.962
+8235,"Jahangirpuri, Delhi - DPCC",2023-24,0,0.0
+8239,"Okhla Phase-2, Delhi - DPCC",2023-24,0,0.0
+8365,"Nehru Nagar, Delhi - DPCC",2023-24,0,0.0
+8472,"Bawana, Delhi - DPCC",2023-24,0,0.0
+8475,"Sonia Vihar, Delhi - DPCC",2023-24,0,0.0
+8915,"Wazirpur, Delhi - DPCC",2023-24,0,0.0
+8917,"Ashok Vihar, Delhi - DPCC",2023-24,0,0.0
+10484,"Sri Aurobindo Marg, Delhi - DPCC",2023-24,0,0.0
+10485,"Narela, Delhi - DPCC",2023-24,0,0.0
+10486,"Mundka, Delhi - DPCC",2023-24,0,0.0
+10487,"Anand Vihar, Delhi - DPCC",2023-24,0,0.0
+10488,"Najafgarh, Delhi - DPCC",2023-24,0,0.0
+10489,"ITO, Delhi - CPCB",2023-24,0,0.0
+10820,"Sector 30, Faridabad - HSPCB",2023-24,0,0.0
+10825,"Sector-51, Gurugram - HSPCB",2023-24,0,0.0
+10831,"Rohini, Delhi - DPCC",2023-24,0,0.0
+10900,"Teri Gram, Gurugram - HSPCB",2023-24,0,0.0
+10921,"NISE Gwal Pahari, Gurugram - IMD",2023-24,0,0.0
+11603,"Chandni Chowk, Delhi - IITM",2023-24,0,0.0
+11607,"Lodhi Road, Delhi - IITM",2023-24,0,0.0
+13,"Delhi Technological University, Delhi - CPCB",2024-25,0,0.0
+15,IGI Airport,2024-25,0,0.0
+16,Civil Lines,2024-25,0,0.0
+17,"R K Puram, Delhi - DPCC",2024-25,0,0.0
+50,"Punjabi Bagh, Delhi - DPCC",2024-25,0,0.0
+103,"Income Tax Office, Delhi - CPCB",2024-25,0,0.0
+235,"Anand Vihar, New Delhi - DPCC",2024-25,0,0.0
+236,"Mandir Marg, Delhi - DPCC",2024-25,0,0.0
+301,"Vikas Sadan, Gurugram - HSPCB",2024-25,0,0.0
+431,"IHBAS, Delhi - CPCB",2024-25,0,0.0
+2503,"Shadipur, Delhi - CPCB",2024-25,0,0.0
+2587,"Sector16A, Faridabad - HSPCB",2024-25,0,0.0
+2597,US Diplomatic Post: New Delhi,2024-25,0,0.0
+5404,"Pusa, Delhi - IMD",2024-25,0,0.0
+5509,"Anand Vihar, Delhi - DPCC",2024-25,0,0.0
+5540,"Punjabi Bagh, Delhi - DPCC",2024-25,0,0.0
+5541,"Burari Crossing, New Delhi - IMD",2024-25,0,0.0
+5570,"Aya Nagar, New Delhi - IMD",2024-25,0,0.0
+5581,"Pusa, New Delhi - IMD",2024-25,0,0.0
+5586,"Sirifort, Delhi - CPCB",2024-25,0,0.0
+5598,"Sector - 125, Noida, UP - UPPCB",2024-25,0,0.0
+5610,"North Campus, DU, Delhi - IMD",2024-25,0,0.0
+5613,"ITO, New Delhi - CPCB",2024-25,0,0.0
+5617,"Sector- 16A, Faridabad - HSPCB",2024-25,0,0.0
+5622,"NSIT Dwarka, Delhi - CPCB",2024-25,0,0.0
+5626,"DTU, New Delhi - CPCB",2024-25,0,0.0
+5627,"CRRI Mathura Road, New Delhi - IMD",2024-25,0,0.0
+5630,"Shadipur, Delhi - CPCB",2024-25,0,0.0
+5634,"Lodhi Road, New Delhi - IMD",2024-25,0,0.0
+5639,"R K Puram, New Delhi - DPCC",2024-25,0,0.0
+5641,"Mandir Marg, New Delhi - DPCC",2024-25,0,0.0
+5650,"IGI Airport (T3), Delhi - IMD",2024-25,0,0.0
+5742,"Patparganj, Delhi - DPCC",2024-25,0,0.0
+5743,"Rohini, Delhi - DPCC",2024-25,0,0.0
+5744,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2024-25,0,0.0
+5753,"Vivek Vihar, Delhi - DPCC",2024-25,0,0.0
+5754,"Jawaharlal Nehru Stadium, Delhi - DPCC",2024-25,0,0.0
+5755,"Major Dhyan Chand National Stadium, Delhi - DPCC",2024-25,0,0.0
+5759,"Sonia Vihar, Delhi - DPCC",2024-25,0,0.0
+5761,"Jahangirpuri, Delhi - DPCC",2024-25,0,0.0
+5762,"Ashok Vihar, Delhi - DPCC",2024-25,0,0.0
+5763,"Narela, Delhi - DPCC",2024-25,0,0.0
+5765,"Okhla Phase-2, Delhi - DPCC",2024-25,0,0.0
+5766,"Nehru Nagar, Delhi - DPCC",2024-25,0,0.0
+6314,"NISE Gwal Pahari, Gurugram - IMD",2024-25,0,0.0
+6356,"Pusa, Delhi - DPCC",2024-25,0,0.0
+6357,"Punjabi Bagh, Delhi - DPCC",2024-25,0,0.0
+6358,"Mandir Marg, New Delhi - DPCC",2024-25,0,0.0
+6359,"IHBAS, Dilshad Garden,New Delhi - CPCB",2024-25,0,0.0
+6929,"Major Dhyan Chand National Stadium, Delhi - DPCC",2024-25,0,0.0
+6931,"Dwarka-Sector 8, Delhi - DPCC",2024-25,0,0.0
+6932,"Alipur, Delhi - DPCC",2024-25,0,0.0
+6934,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2024-25,0,0.0
+6936,"Arya Nagar, Bahadurgarh - HSPCB",2024-25,0,0.0
+6938,"Vivek Vihar, Delhi - DPCC",2024-25,0,0.0
+6957,"Jawaharlal Nehru Stadium, Delhi - DPCC",2024-25,0,0.0
+6960,"Patparganj, Delhi - DPCC",2024-25,0,0.0
+6980,"Sector-1, Noida - UPPCB",2024-25,0,0.0
+7005,"Loni, Ghaziabad - UPPCB",2024-25,0,0.0
+7044,"R K Puram, Delhi - DPCC",2024-25,0,0.0
+8118,New Delhi,2024-25,2826,0.957
+8235,"Jahangirpuri, Delhi - DPCC",2024-25,0,0.0
+8239,"Okhla Phase-2, Delhi - DPCC",2024-25,0,0.0
+8365,"Nehru Nagar, Delhi - DPCC",2024-25,0,0.0
+8472,"Bawana, Delhi - DPCC",2024-25,0,0.0
+8475,"Sonia Vihar, Delhi - DPCC",2024-25,0,0.0
+8915,"Wazirpur, Delhi - DPCC",2024-25,0,0.0
+8917,"Ashok Vihar, Delhi - DPCC",2024-25,0,0.0
+10484,"Sri Aurobindo Marg, Delhi - DPCC",2024-25,0,0.0
+10485,"Narela, Delhi - DPCC",2024-25,0,0.0
+10486,"Mundka, Delhi - DPCC",2024-25,0,0.0
+10487,"Anand Vihar, Delhi - DPCC",2024-25,0,0.0
+10488,"Najafgarh, Delhi - DPCC",2024-25,0,0.0
+10489,"ITO, Delhi - CPCB",2024-25,0,0.0
+10820,"Sector 30, Faridabad - HSPCB",2024-25,0,0.0
+10825,"Sector-51, Gurugram - HSPCB",2024-25,0,0.0
+10831,"Rohini, Delhi - DPCC",2024-25,0,0.0
+10900,"Teri Gram, Gurugram - HSPCB",2024-25,0,0.0
+10921,"NISE Gwal Pahari, Gurugram - IMD",2024-25,0,0.0
+11603,"Chandni Chowk, Delhi - IITM",2024-25,0,0.0
+11607,"Lodhi Road, Delhi - IITM",2024-25,0,0.0
+13,"Delhi Technological University, Delhi - CPCB",2025-26,0,0.0
+15,IGI Airport,2025-26,0,0.0
+16,Civil Lines,2025-26,0,0.0
+17,"R K Puram, Delhi - DPCC",2025-26,2579,0.874
+50,"Punjabi Bagh, Delhi - DPCC",2025-26,2498,0.846
+103,"Income Tax Office, Delhi - CPCB",2025-26,0,0.0
+235,"Anand Vihar, New Delhi - DPCC",2025-26,2589,0.877
+236,"Mandir Marg, Delhi - DPCC",2025-26,0,0.0
+301,"Vikas Sadan, Gurugram - HSPCB",2025-26,2433,0.824
+431,"IHBAS, Delhi - CPCB",2025-26,0,0.0
+2503,"Shadipur, Delhi - CPCB",2025-26,0,0.0
+2587,"Sector16A, Faridabad - HSPCB",2025-26,0,0.0
+2597,US Diplomatic Post: New Delhi,2025-26,0,0.0
+5404,"Pusa, Delhi - IMD",2025-26,2252,0.763
+5509,"Anand Vihar, Delhi - DPCC",2025-26,0,0.0
+5540,"Punjabi Bagh, Delhi - DPCC",2025-26,0,0.0
+5541,"Burari Crossing, New Delhi - IMD",2025-26,2597,0.88
+5570,"Aya Nagar, New Delhi - IMD",2025-26,2586,0.876
+5581,"Pusa, New Delhi - IMD",2025-26,0,0.0
+5586,"Sirifort, Delhi - CPCB",2025-26,2631,0.891
+5598,"Sector - 125, Noida, UP - UPPCB",2025-26,2459,0.833
+5610,"North Campus, DU, Delhi - IMD",2025-26,2542,0.861
+5613,"ITO, New Delhi - CPCB",2025-26,2596,0.879
+5617,"Sector- 16A, Faridabad - HSPCB",2025-26,0,0.0
+5622,"NSIT Dwarka, Delhi - CPCB",2025-26,2599,0.88
+5626,"DTU, New Delhi - CPCB",2025-26,2626,0.89
+5627,"CRRI Mathura Road, New Delhi - IMD",2025-26,2579,0.874
+5630,"Shadipur, Delhi - CPCB",2025-26,2579,0.874
+5634,"Lodhi Road, New Delhi - IMD",2025-26,2585,0.876
+5639,"R K Puram, New Delhi - DPCC",2025-26,0,0.0
+5641,"Mandir Marg, New Delhi - DPCC",2025-26,0,0.0
+5650,"IGI Airport (T3), Delhi - IMD",2025-26,2585,0.876
+5742,"Patparganj, Delhi - DPCC",2025-26,0,0.0
+5743,"Rohini, Delhi - DPCC",2025-26,0,0.0
+5744,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2025-26,0,0.0
+5753,"Vivek Vihar, Delhi - DPCC",2025-26,0,0.0
+5754,"Jawaharlal Nehru Stadium, Delhi - DPCC",2025-26,0,0.0
+5755,"Major Dhyan Chand National Stadium, Delhi - DPCC",2025-26,0,0.0
+5759,"Sonia Vihar, Delhi - DPCC",2025-26,0,0.0
+5761,"Jahangirpuri, Delhi - DPCC",2025-26,0,0.0
+5762,"Ashok Vihar, Delhi - DPCC",2025-26,0,0.0
+5763,"Narela, Delhi - DPCC",2025-26,0,0.0
+5765,"Okhla Phase-2, Delhi - DPCC",2025-26,0,0.0
+5766,"Nehru Nagar, Delhi - DPCC",2025-26,0,0.0
+6314,"NISE Gwal Pahari, Gurugram - IMD",2025-26,0,0.0
+6356,"Pusa, Delhi - DPCC",2025-26,2583,0.875
+6357,"Punjabi Bagh, Delhi - DPCC",2025-26,0,0.0
+6358,"Mandir Marg, New Delhi - DPCC",2025-26,2545,0.862
+6359,"IHBAS, Dilshad Garden,New Delhi - CPCB",2025-26,2591,0.878
+6929,"Major Dhyan Chand National Stadium, Delhi - DPCC",2025-26,2602,0.881
+6931,"Dwarka-Sector 8, Delhi - DPCC",2025-26,2582,0.875
+6932,"Alipur, Delhi - DPCC",2025-26,2582,0.875
+6934,"Dr. Karni Singh Shooting Range, Delhi - DPCC",2025-26,2599,0.88
+6936,"Arya Nagar, Bahadurgarh - HSPCB",2025-26,2528,0.856
+6938,"Vivek Vihar, Delhi - DPCC",2025-26,2568,0.87
+6957,"Jawaharlal Nehru Stadium, Delhi - DPCC",2025-26,2607,0.883
+6960,"Patparganj, Delhi - DPCC",2025-26,2604,0.882
+6980,"Sector-1, Noida - UPPCB",2025-26,2441,0.827
+7005,"Loni, Ghaziabad - UPPCB",2025-26,2267,0.768
+7044,"R K Puram, Delhi - DPCC",2025-26,0,0.0
+8118,New Delhi,2025-26,2785,0.943
+8235,"Jahangirpuri, Delhi - DPCC",2025-26,2593,0.878
+8239,"Okhla Phase-2, Delhi - DPCC",2025-26,2538,0.86
+8365,"Nehru Nagar, Delhi - DPCC",2025-26,2595,0.879
+8472,"Bawana, Delhi - DPCC",2025-26,2591,0.878
+8475,"Sonia Vihar, Delhi - DPCC",2025-26,2612,0.885
+8915,"Wazirpur, Delhi - DPCC",2025-26,2594,0.879
+8917,"Ashok Vihar, Delhi - DPCC",2025-26,2603,0.882
+10484,"Sri Aurobindo Marg, Delhi - DPCC",2025-26,2547,0.863
+10485,"Narela, Delhi - DPCC",2025-26,2594,0.879
+10486,"Mundka, Delhi - DPCC",2025-26,2550,0.864
+10487,"Anand Vihar, Delhi - DPCC",2025-26,0,0.0
+10488,"Najafgarh, Delhi - DPCC",2025-26,2526,0.856
+10489,"ITO, Delhi - CPCB",2025-26,0,0.0
+10820,"Sector 30, Faridabad - HSPCB",2025-26,463,0.157
+10825,"Sector-51, Gurugram - HSPCB",2025-26,2459,0.833
+10831,"Rohini, Delhi - DPCC",2025-26,2616,0.886
+10900,"Teri Gram, Gurugram - HSPCB",2025-26,1574,0.533
+10921,"NISE Gwal Pahari, Gurugram - IMD",2025-26,2541,0.861
+11603,"Chandni Chowk, Delhi - IITM",2025-26,2202,0.746
+11607,"Lodhi Road, Delhi - IITM",2025-26,1939,0.657
