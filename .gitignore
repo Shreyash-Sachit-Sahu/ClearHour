@@ -6,3 +6,5 @@ data/raw/
 data/processed/
 *.part
 *.swp
+.env*
+!.env.example
