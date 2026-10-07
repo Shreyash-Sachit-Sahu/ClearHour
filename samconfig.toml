@@ -1,0 +1,9 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "clearhour"
+region = "ap-south-1"
+profile = "clearhour"
+capabilities = "CAPABILITY_IAM"
+resolve_s3 = true
+resolve_image_repos = true
+confirm_changeset = false

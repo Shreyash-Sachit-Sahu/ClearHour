@@ -1,0 +1,11 @@
+# The Forecast image copies only functions/forecast/requirements.txt and src/clearhour; keep the rest out of the
+# build context (SAM sends the whole repo root otherwise, .venv and data/raw included).
+.git
+.venv
+.aws-sam
+data
+outputs
+models
+docs
+web
+**/__pycache__

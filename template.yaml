@@ -1,0 +1,234 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: ClearHour - hourly ingest, 05:30 IST forecast-decide-send run, WhatsApp replies
+
+Parameters:
+  OpenAqApiKey:
+    Type: String
+    NoEcho: true
+  WaMode:
+    Type: String
+    Default: dry_run
+    AllowedValues: [dry_run, eum, meta]
+  WaPhoneNumberId:
+    Type: String
+    Default: ""
+    Description: End User Messaging Social phone number id (phone-number-id-...)
+  WaTemplateName:
+    Type: String
+    Default: clearhour_daily_alert
+  WaTemplateLangEn:
+    Type: String
+    Default: en
+  WaTemplateLangHi:
+    Type: String
+    Default: hi
+  MetaApiVersion:
+    Type: String
+    Default: v20.0
+  MetaPhoneNumberId:
+    Type: String
+    Default: ""
+    Description: Plan B only - Meta Cloud API phone number id
+  MetaAccessToken:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: Plan B only - Meta Cloud API access token
+  WhatsAppEventsTopicArn:
+    Type: String
+    Default: ""
+    Description: SNS topic that End User Messaging Social publishes incoming messages to
+
+Conditions:
+  HasEventsTopic: !Not [!Equals [!Ref WhatsAppEventsTopicArn, ""]]
+
+Globals:
+  Function:
+    Architectures: [x86_64]
+    MemorySize: 256
+    Timeout: 60
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref ClearHourTable
+        DATA_BUCKET: !Ref DataBucket
+
+Resources:
+  ClearHourTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  IngestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: clearhour.handlers.ingest.handler
+      Runtime: python3.13
+      Timeout: 180
+      Environment:
+        Variables:
+          OPENAQ_API_KEY: !Ref OpenAqApiKey
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClearHourTable
+      Events:
+        Hourly:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(10 * * * ? *)
+
+  ForecastFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      MemorySize: 2048
+      Timeout: 180
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref ClearHourTable
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+    Metadata:
+      Dockerfile: functions/forecast/Dockerfile
+      DockerContext: .
+      DockerTag: v1
+
+  DecideFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: clearhour.handlers.decide.handler
+      Runtime: python3.13
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClearHourTable
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+
+  SendFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: clearhour.handlers.send.handler
+      Runtime: python3.13
+      Environment:
+        Variables:
+          WA_MODE: !Ref WaMode
+          WA_PHONE_NUMBER_ID: !Ref WaPhoneNumberId
+          WA_TEMPLATE_NAME: !Ref WaTemplateName
+          WA_TEMPLATE_LANG_EN: !Ref WaTemplateLangEn
+          WA_TEMPLATE_LANG_HI: !Ref WaTemplateLangHi
+          META_API_VERSION: !Ref MetaApiVersion
+          META_PHONE_NUMBER_ID: !Ref MetaPhoneNumberId
+          META_ACCESS_TOKEN: !Ref MetaAccessToken
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClearHourTable
+        - Statement:
+            - Effect: Allow
+              Action: social-messaging:SendWhatsAppMessage
+              Resource: "*"
+
+  InboundFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: clearhour.handlers.inbound.handler
+      Runtime: python3.13
+      Environment:
+        Variables:
+          WA_MODE: !Ref WaMode
+          WA_PHONE_NUMBER_ID: !Ref WaPhoneNumberId
+          WA_TEMPLATE_NAME: !Ref WaTemplateName
+          WA_TEMPLATE_LANG_EN: !Ref WaTemplateLangEn
+          WA_TEMPLATE_LANG_HI: !Ref WaTemplateLangHi
+          META_API_VERSION: !Ref MetaApiVersion
+          META_PHONE_NUMBER_ID: !Ref MetaPhoneNumberId
+          META_ACCESS_TOKEN: !Ref MetaAccessToken
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClearHourTable
+        - Statement:
+            - Effect: Allow
+              Action: social-messaging:SendWhatsAppMessage
+              Resource: "*"
+
+  InboundSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasEventsTopic
+    Properties:
+      Protocol: lambda
+      TopicArn: !Ref WhatsAppEventsTopicArn
+      Endpoint: !GetAtt InboundFunction.Arn
+
+  InboundPermission:
+    Type: AWS::Lambda::Permission
+    Condition: HasEventsTopic
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref InboundFunction
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref WhatsAppEventsTopicArn
+
+  DailyRun:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: statemachine/daily.asl.json
+      DefinitionSubstitutions:
+        ForecastFunctionArn: !GetAtt ForecastFunction.Arn
+        DecideFunctionArn: !GetAtt DecideFunction.Arn
+        SendFunctionArn: !GetAtt SendFunction.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ForecastFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref DecideFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref SendFunction
+      Events:
+        Morning:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(30 5 * * ? *)
+            ScheduleExpressionTimezone: Asia/Kolkata
+            Input: '{"source": "live"}'
+
+Outputs:
+  TableName:
+    Value: !Ref ClearHourTable
+  DataBucketName:
+    Value: !Ref DataBucket
+  DailyRunArn:
+    Value: !Ref DailyRun
+  ForecastFunctionName:
+    Value: !Ref ForecastFunction
+  IngestFunctionName:
+    Value: !Ref IngestFunction

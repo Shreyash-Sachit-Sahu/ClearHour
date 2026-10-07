@@ -1,0 +1,59 @@
+{
+  "Comment": "ClearHour daily run: forecast every station, decide every school, send the subscribed schools' alerts",
+  "StartAt": "Forecast",
+  "States": {
+    "Forecast": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": { "FunctionName": "${ForecastFunctionArn}", "Payload.$": "$" },
+      "OutputPath": "$.Payload",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Decide"
+    },
+    "Decide": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": { "FunctionName": "${DecideFunctionArn}", "Payload.$": "$" },
+      "OutputPath": "$.Payload",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "SendAlerts"
+    },
+    "SendAlerts": {
+      "Type": "Map",
+      "ItemsPath": "$.alerts",
+      "MaxConcurrency": 5,
+      "ItemProcessor": {
+        "ProcessorConfig": { "Mode": "INLINE" },
+        "StartAt": "Send",
+        "States": {
+          "Send": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": { "FunctionName": "${SendFunctionArn}", "Payload.$": "$" },
+            "OutputPath": "$.Payload",
+            "Retry": [{ "ErrorEquals": ["States.ALL"], "IntervalSeconds": 10, "MaxAttempts": 2, "BackoffRate": 2 }],
+            "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "SendFailed" }],
+            "End": true
+          },
+          "SendFailed": { "Type": "Pass", "End": true }
+        }
+      },
+      "ResultPath": "$.sent",
+      "End": true
+    }
+  }
+}
