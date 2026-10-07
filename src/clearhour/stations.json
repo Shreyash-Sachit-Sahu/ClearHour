@@ -1,0 +1,370 @@
+[
+  {
+    "location_id": 17,
+    "pm25_sensor_id": 35,
+    "name": "R K Puram, Delhi - DPCC",
+    "lat": 28.56326,
+    "lon": 77.18694,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 50,
+    "pm25_sensor_id": 12234796,
+    "name": "Punjabi Bagh, Delhi - DPCC",
+    "lat": 28.67404,
+    "lon": 77.13102,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 235,
+    "pm25_sensor_id": 12235610,
+    "name": "Anand Vihar, New Delhi - DPCC",
+    "lat": 28.64683,
+    "lon": 77.31603,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 301,
+    "pm25_sensor_id": 14258988,
+    "name": "Vikas Sadan, Gurugram - HSPCB",
+    "lat": 28.45012,
+    "lon": 77.02631,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5404,
+    "pm25_sensor_id": 12234702,
+    "name": "Pusa, Delhi - IMD",
+    "lat": 28.63965,
+    "lon": 77.14626,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5541,
+    "pm25_sensor_id": 12234684,
+    "name": "Burari Crossing, New Delhi - IMD",
+    "lat": 28.72565,
+    "lon": 77.20116,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5570,
+    "pm25_sensor_id": 12234708,
+    "name": "Aya Nagar, New Delhi - IMD",
+    "lat": 28.47426,
+    "lon": 77.13161,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5586,
+    "pm25_sensor_id": 12234769,
+    "name": "Sirifort, Delhi - CPCB",
+    "lat": 28.55042,
+    "lon": 77.21594,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5598,
+    "pm25_sensor_id": 12235187,
+    "name": "Sector - 125, Noida, UP - UPPCB",
+    "lat": 28.54476,
+    "lon": 77.32313,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5610,
+    "pm25_sensor_id": 14860,
+    "name": "North Campus, DU, Delhi - IMD",
+    "lat": 28.65738,
+    "lon": 77.15854,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5613,
+    "pm25_sensor_id": 14878,
+    "name": "ITO, New Delhi - CPCB",
+    "lat": 28.62862,
+    "lon": 77.24106,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5622,
+    "pm25_sensor_id": 12234744,
+    "name": "NSIT Dwarka, Delhi - CPCB",
+    "lat": 28.60909,
+    "lon": 77.03254,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5626,
+    "pm25_sensor_id": 14985,
+    "name": "DTU, New Delhi - CPCB",
+    "lat": 28.75005,
+    "lon": 77.11126,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5627,
+    "pm25_sensor_id": 12234678,
+    "name": "CRRI Mathura Road, New Delhi - IMD",
+    "lat": 28.5512,
+    "lon": 77.27357,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5630,
+    "pm25_sensor_id": 14959,
+    "name": "Shadipur, Delhi - CPCB",
+    "lat": 28.65148,
+    "lon": 77.14731,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5634,
+    "pm25_sensor_id": 14984,
+    "name": "Lodhi Road, New Delhi - IMD",
+    "lat": 28.59182,
+    "lon": 77.22731,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 5650,
+    "pm25_sensor_id": 12234696,
+    "name": "IGI Airport (T3), Delhi - IMD",
+    "lat": 28.56278,
+    "lon": 77.11801,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6356,
+    "pm25_sensor_id": 12235321,
+    "name": "Pusa, Delhi - DPCC",
+    "lat": 28.63965,
+    "lon": 77.14626,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6358,
+    "pm25_sensor_id": 12234778,
+    "name": "Mandir Marg, New Delhi - DPCC",
+    "lat": 28.63643,
+    "lon": 77.20107,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6359,
+    "pm25_sensor_id": 17790,
+    "name": "IHBAS, Dilshad Garden,New Delhi - CPCB",
+    "lat": 28.68117,
+    "lon": 77.30252,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6929,
+    "pm25_sensor_id": 12235047,
+    "name": "Major Dhyan Chand National Stadium, Delhi - DPCC",
+    "lat": 28.61128,
+    "lon": 77.23774,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6931,
+    "pm25_sensor_id": 20150,
+    "name": "Dwarka-Sector 8, Delhi - DPCC",
+    "lat": 28.57103,
+    "lon": 77.0719,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6932,
+    "pm25_sensor_id": 12235698,
+    "name": "Alipur, Delhi - DPCC",
+    "lat": 28.81533,
+    "lon": 77.15301,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6934,
+    "pm25_sensor_id": 19919,
+    "name": "Dr. Karni Singh Shooting Range, Delhi - DPCC",
+    "lat": 28.49857,
+    "lon": 77.26484,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6936,
+    "pm25_sensor_id": 14233904,
+    "name": "Arya Nagar, Bahadurgarh - HSPCB",
+    "lat": 28.6701,
+    "lon": 76.9254,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6938,
+    "pm25_sensor_id": 12235133,
+    "name": "Vivek Vihar, Delhi - DPCC",
+    "lat": 28.67234,
+    "lon": 77.31526,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6957,
+    "pm25_sensor_id": 20020,
+    "name": "Jawaharlal Nehru Stadium, Delhi - DPCC",
+    "lat": 28.58028,
+    "lon": 77.23383,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6960,
+    "pm25_sensor_id": 20049,
+    "name": "Patparganj, Delhi - DPCC",
+    "lat": 28.62375,
+    "lon": 77.28721,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 6980,
+    "pm25_sensor_id": 12235951,
+    "name": "Sector-1, Noida - UPPCB",
+    "lat": 28.58925,
+    "lon": 77.32196,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 7005,
+    "pm25_sensor_id": 12235787,
+    "name": "Loni, Ghaziabad - UPPCB",
+    "lat": 28.75729,
+    "lon": 77.27879,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8118,
+    "pm25_sensor_id": 23534,
+    "name": "New Delhi",
+    "lat": 28.63576,
+    "lon": 77.22445,
+    "provider": "AirNow"
+  },
+  {
+    "location_id": 8235,
+    "pm25_sensor_id": 23997,
+    "name": "Jahangirpuri, Delhi - DPCC",
+    "lat": 28.73282,
+    "lon": 77.17063,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8239,
+    "pm25_sensor_id": 12235074,
+    "name": "Okhla Phase-2, Delhi - DPCC",
+    "lat": 28.53079,
+    "lon": 77.27125,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8365,
+    "pm25_sensor_id": 12235083,
+    "name": "Nehru Nagar, Delhi - DPCC",
+    "lat": 28.56789,
+    "lon": 77.25051,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8472,
+    "pm25_sensor_id": 12235294,
+    "name": "Bawana, Delhi - DPCC",
+    "lat": 28.7762,
+    "lon": 77.05107,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8475,
+    "pm25_sensor_id": 35050,
+    "name": "Sonia Vihar, Delhi - DPCC",
+    "lat": 28.71051,
+    "lon": 77.24949,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8915,
+    "pm25_sensor_id": 12235124,
+    "name": "Wazirpur, Delhi - DPCC",
+    "lat": 28.69979,
+    "lon": 77.16545,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 8917,
+    "pm25_sensor_id": 12235002,
+    "name": "Ashok Vihar, Delhi - DPCC",
+    "lat": 28.69538,
+    "lon": 77.18166,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10484,
+    "pm25_sensor_id": 34772,
+    "name": "Sri Aurobindo Marg, Delhi - DPCC",
+    "lat": 28.53135,
+    "lon": 77.19016,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10485,
+    "pm25_sensor_id": 34790,
+    "name": "Narela, Delhi - DPCC",
+    "lat": 28.82284,
+    "lon": 77.10198,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10486,
+    "pm25_sensor_id": 12235303,
+    "name": "Mundka, Delhi - DPCC",
+    "lat": 28.68468,
+    "lon": 77.07657,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10488,
+    "pm25_sensor_id": 34774,
+    "name": "Najafgarh, Delhi - DPCC",
+    "lat": 28.57017,
+    "lon": 76.93376,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10825,
+    "pm25_sensor_id": 36181,
+    "name": "Sector-51, Gurugram - HSPCB",
+    "lat": 28.4227,
+    "lon": 77.0667,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10831,
+    "pm25_sensor_id": 12235092,
+    "name": "Rohini, Delhi - DPCC",
+    "lat": 28.73253,
+    "lon": 77.11992,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 10921,
+    "pm25_sensor_id": 12235707,
+    "name": "NISE Gwal Pahari, Gurugram - IMD",
+    "lat": 28.42268,
+    "lon": 77.14894,
+    "provider": "CPCB"
+  },
+  {
+    "location_id": 11603,
+    "pm25_sensor_id": 39410,
+    "name": "Chandni Chowk, Delhi - IITM",
+    "lat": 28.65676,
+    "lon": 77.22723,
+    "provider": "CPCB"
+  }
+]
