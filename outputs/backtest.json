@@ -1,0 +1,148 @@
+{
+  "stations": 46,
+  "station_ids": [
+    17,
+    50,
+    235,
+    301,
+    5404,
+    5541,
+    5570,
+    5586,
+    5598,
+    5610,
+    5613,
+    5622,
+    5626,
+    5627,
+    5630,
+    5634,
+    5650,
+    6356,
+    6358,
+    6359,
+    6929,
+    6931,
+    6932,
+    6934,
+    6936,
+    6938,
+    6957,
+    6960,
+    6980,
+    7005,
+    8118,
+    8235,
+    8239,
+    8365,
+    8472,
+    8475,
+    8915,
+    8917,
+    10484,
+    10485,
+    10486,
+    10488,
+    10825,
+    10831,
+    10921,
+    11603
+  ],
+  "test_weeks": [
+    "2025-11-10",
+    "2025-11-17",
+    "2025-11-24",
+    "2025-12-01",
+    "2025-12-08",
+    "2025-12-15",
+    "2025-12-22",
+    "2025-12-29",
+    "2026-01-05",
+    "2026-01-12",
+    "2026-01-19",
+    "2026-01-26"
+  ],
+  "rows": 18888,
+  "mae": {
+    "model": 49.1,
+    "persistence": 59.5,
+    "cams": 94.0,
+    "yesterday": 63.8
+  },
+  "station_days": 1956,
+  "hit_rate_top2": {
+    "model": 0.67,
+    "cams": 0.623,
+    "always_12": 0.542,
+    "always_13": 0.624
+  },
+  "realised_cut_vs_assembly": {
+    "median": 0.167,
+    "mean": 0.129
+  },
+  "mae_by_lead": [
+    {
+      "lead_h": 4,
+      "err_model": 42.8,
+      "err_persist": 42.0
+    },
+    {
+      "lead_h": 5,
+      "err_model": 47.6,
+      "err_persist": 46.1
+    },
+    {
+      "lead_h": 6,
+      "err_model": 53.5,
+      "err_persist": 51.4
+    },
+    {
+      "lead_h": 7,
+      "err_model": 52.7,
+      "err_persist": 58.9
+    },
+    {
+      "lead_h": 8,
+      "err_model": 49.7,
+      "err_persist": 72.6
+    },
+    {
+      "lead_h": 9,
+      "err_model": 47.8,
+      "err_persist": 85.3
+    },
+    {
+      "lead_h": 10,
+      "err_model": 62.1,
+      "err_persist": 89.7
+    },
+    {
+      "lead_h": 11,
+      "err_model": 64.7,
+      "err_persist": 102.0
+    },
+    {
+      "lead_h": 12,
+      "err_model": 63.2,
+      "err_persist": 85.9
+    },
+    {
+      "lead_h": 13,
+      "err_model": 50.0,
+      "err_persist": 106.8
+    },
+    {
+      "lead_h": 14,
+      "err_model": 57.6,
+      "err_persist": 102.8
+    },
+    {
+      "lead_h": 15,
+      "err_model": 44.1,
+      "err_persist": 55.0
+    }
+  ],
+  "station_days_where_always_13_misses": 736,
+  "model_hit_rate_top2_where_always_13_misses": 0.303,
+  "share_model_picks_13": 0.674
+}
