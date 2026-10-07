@@ -1341,6 +1341,12 @@ Commit: `data: city-point weather and CAMS history`.
 - the model's hit rate is less than 0.02 above `always_13`'s
 
 Either one means the forecast isn't earning its place, and we reframe before building on it.
+
+Amended 8 Oct, 03:10: in `scripts/backtest.py` (not `model.py`), compute from `pred` and add to
+`backtest.json` and the printout: the model's top-2 hit rate on the station-days where `always_13` misses, and
+the share of station-days where the model picks 13:00. The stop rule is unchanged; if it triggers, show these
+numbers alongside it.
+
 Commit: `analysis: walk-forward backtest`.
 
 ## P2-T4: Final model → `models/clearhour-lgbm.txt` and `models/features.json`
