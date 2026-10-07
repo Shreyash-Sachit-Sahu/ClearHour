@@ -1,0 +1,82 @@
+location_id,name,lat,lon,provider,owner,pm25_sensor_id,first_utc,last_utc
+13,"Delhi Technological University, Delhi - CPCB",28.744,77.12,CPCB,Unknown Governmental Organization,13864,2016-11-02T19:00:00Z,2018-02-22T04:00:00Z
+15,IGI Airport,28.56,77.094,CPCB,Unknown Governmental Organization,30,,
+16,Civil Lines,28.6787,77.2262,CPCB,Unknown Governmental Organization,34,,
+17,"R K Puram, Delhi - DPCC",28.563262,77.186937,CPCB,Delhi Pollution Control Committee,35,2016-02-05T14:55:00Z,2026-10-02T08:30:00Z
+50,"Punjabi Bagh, Delhi - DPCC",28.674045,77.131023,CPCB,Delhi Pollution Control Committee,12234796,2016-02-05T14:55:00Z,2026-10-02T08:30:00Z
+103,"Income Tax Office, Delhi - CPCB",28.623499999999996,77.2494,CPCB,Unknown Governmental Organization,13861,2016-11-02T18:30:00Z,2018-02-22T03:45:00Z
+235,"Anand Vihar, New Delhi - DPCC",28.646835,77.316032,CPCB,Delhi Pollution Control Committee,12235610,2016-02-05T14:15:00Z,2026-10-02T08:30:00Z
+236,"Mandir Marg, Delhi - DPCC",28.6341,77.2005,CPCB,Unknown Governmental Organization,388,2016-02-05T15:00:00Z,2018-02-21T21:15:00Z
+301,"Vikas Sadan, Gurugram - HSPCB",28.4501238,77.0263051,CPCB,Haryana State Pollution Control Board,14258988,2016-03-25T08:00:00Z,2026-10-02T08:30:00Z
+431,"IHBAS, Delhi - CPCB",28.6821,77.305,CPCB,Unknown Governmental Organization,13868,2016-04-10T18:30:00Z,2018-02-22T02:45:00Z
+2503,"Shadipur, Delhi - CPCB",28.651699999999998,77.1581,CPCB,Unknown Governmental Organization,13860,2016-03-21T23:30:00Z,2018-02-22T02:45:00Z
+2587,"Sector16A, Faridabad - HSPCB",28.410122219999998,77.313775,CPCB,Unknown Governmental Organization,13900,2016-03-22T00:45:00Z,2018-02-22T03:25:00Z
+2597,US Diplomatic Post: New Delhi,28.598096,77.189066,StateAir NewDelhi,Unknown Governmental Organization,5398,2016-01-30T00:30:00Z,2016-11-09T16:30:00Z
+5404,"Pusa, Delhi - IMD",28.639645,77.146263,CPCB,India Meteorological Department,12234702,2017-09-15T06:00:00Z,2026-10-02T08:30:00Z
+5509,"Anand Vihar, Delhi - DPCC",28.647622000000002,77.315809,caaqm,Unknown Governmental Organization,14521,2018-03-09T03:30:00Z,2022-10-31T00:30:00Z
+5540,"Punjabi Bagh, Delhi - DPCC",28.6670856,77.1301247,caaqm,Unknown Governmental Organization,14617,2018-03-09T03:30:00Z,2018-05-13T11:30:00Z
+5541,"Burari Crossing, New Delhi - IMD",28.7256504,77.2011573,CPCB,India Meteorological Department,12234684,2018-03-09T06:00:00Z,2026-10-02T08:30:00Z
+5570,"Aya Nagar, New Delhi - IMD",28.474261,77.131606,CPCB,India Meteorological Department,12234708,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5581,"Pusa, New Delhi - IMD",28.610304,77.0996943,caaqm,Unknown Governmental Organization,14853,2018-03-09T06:00:00Z,2018-05-14T02:00:00Z
+5586,"Sirifort, Delhi - CPCB",28.5504249,77.2159377,CPCB,Central Pollution Control Board,12234769,2025-02-18T20:15:00Z,2026-10-02T08:30:00Z
+5598,"Sector - 125, Noida, UP - UPPCB",28.5447608,77.3231257,CPCB,Uttar Pradesh Pollution Control Board,12235187,2025-02-18T20:15:00Z,2026-10-02T08:30:00Z
+5610,"North Campus, DU, Delhi - IMD",28.6573814,77.1585447,CPCB,India Meteorological Department,14860,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5613,"ITO, New Delhi - CPCB",28.628624,77.24106,CPCB,Central Pollution Control Board,14878,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5617,"Sector- 16A, Faridabad - HSPCB",28.4088421,77.3099081,caaqm,Unknown Governmental Organization,14930,2018-03-09T06:00:00Z,2022-10-31T02:00:00Z
+5622,"NSIT Dwarka, Delhi - CPCB",28.60909,77.0325413,CPCB,Central Pollution Control Board,12234744,2018-03-09T06:00:00Z,2026-10-02T08:30:00Z
+5626,"DTU, New Delhi - CPCB",28.7500499,77.1112615,CPCB,Central Pollution Control Board,14985,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5627,"CRRI Mathura Road, New Delhi - IMD",28.5512005,77.2735737,CPCB,India Meteorological Department,12234678,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5630,"Shadipur, Delhi - CPCB",28.6514781,77.1473105,CPCB,Central Pollution Control Board,14959,2018-03-09T06:00:00Z,2026-10-02T08:30:00Z
+5634,"Lodhi Road, New Delhi - IMD",28.5918245,77.2273074,CPCB,India Meteorological Department,14984,2018-03-09T05:30:00Z,2026-10-02T08:30:00Z
+5639,"R K Puram, New Delhi - DPCC",28.5646102,77.1670103,caaqm,Unknown Governmental Organization,15071,2018-03-09T03:30:00Z,2018-05-12T04:45:00Z
+5641,"Mandir Marg, New Delhi - DPCC",28.6372688,77.2005604,caaqm,Unknown Governmental Organization,15014,2018-03-09T03:30:00Z,2018-05-12T04:30:00Z
+5650,"IGI Airport (T3), Delhi - IMD",28.5627763,77.1180053,CPCB,India Meteorological Department,12234696,2025-02-18T20:16:00Z,2026-10-02T08:30:00Z
+5742,"Patparganj, Delhi - DPCC",28.6310495,77.2846218,caaqm,Unknown Governmental Organization,15629,2018-04-16T07:30:00Z,2018-05-13T11:30:00Z
+5743,"Rohini, Delhi - DPCC",28.7407056,77.0577492,caaqm,Unknown Governmental Organization,15618,2018-04-26T02:45:00Z,2018-05-12T06:30:00Z
+5744,"Dr. Karni Singh Shooting Range, Delhi - DPCC",28.4997315,77.2649067,caaqm,Unknown Governmental Organization,15589,2018-04-16T07:30:00Z,2018-05-12T04:45:00Z
+5753,"Vivek Vihar, Delhi - DPCC",28.6687803,77.3130982,caaqm,Unknown Governmental Organization,15604,2018-04-16T06:00:00Z,2018-05-12T06:00:00Z
+5754,"Jawaharlal Nehru Stadium, Delhi - DPCC",28.5828503,77.2321778,caaqm,Unknown Governmental Organization,15620,2018-04-16T14:30:00Z,2018-05-12T06:30:00Z
+5755,"Major Dhyan Chand National Stadium, Delhi - DPCC",28.6125027,77.2351994,caaqm,Unknown Governmental Organization,15551,2018-04-26T23:00:00Z,2018-05-12T04:30:00Z
+5759,"Sonia Vihar, Delhi - DPCC",28.67795,77.29868,caaqm,Unknown Governmental Organization,15595,2018-04-16T06:00:00Z,2018-05-12T05:00:00Z
+5761,"Jahangirpuri, Delhi - DPCC",28.7258373,77.1605631,caaqm,Unknown Governmental Organization,15621,2018-04-16T07:30:00Z,2018-05-12T06:30:00Z
+5762,"Ashok Vihar, Delhi - DPCC",28.6957202,77.1812947,caaqm,Unknown Governmental Organization,15602,2018-04-16T15:00:00Z,2018-05-12T06:00:00Z
+5763,"Narela, Delhi - DPCC",28.8446874,77.0332666,caaqm,Unknown Governmental Organization,15606,2018-04-16T09:00:00Z,2018-05-12T06:00:00Z
+5765,"Okhla Phase-2, Delhi - DPCC",28.5366411,77.2664587,caaqm,Unknown Governmental Organization,15627,2018-04-26T03:00:00Z,2018-05-13T10:00:00Z
+5766,"Nehru Nagar, Delhi - DPCC",28.5639543,77.2587868,caaqm,Unknown Governmental Organization,15626,2018-04-15T20:00:00Z,2018-05-13T10:00:00Z
+6314,"NISE Gwal Pahari, Gurugram - IMD",28.4228859,76.8496963,caaqm,Unknown Governmental Organization,17564,2018-11-15T02:00:00Z,2018-11-16T04:00:00Z
+6356,"Pusa, Delhi - DPCC",28.639645,77.146262,CPCB,Delhi Pollution Control Committee,12235321,2025-02-18T20:15:00Z,2026-10-02T08:30:00Z
+6357,"Punjabi Bagh, Delhi - DPCC",28.674045000000003,77.13102300000001,caaqm,Unknown Governmental Organization,17776,2018-08-10T06:00:00Z,2022-10-16T14:15:00Z
+6358,"Mandir Marg, New Delhi - DPCC",28.636429,77.201067,CPCB,Delhi Pollution Control Committee,12234778,2018-08-10T06:00:00Z,2026-10-02T08:30:00Z
+6359,"IHBAS, Dilshad Garden,New Delhi - CPCB",28.6811736,77.3025234,CPCB,Central Pollution Control Board,17790,2018-04-28T15:45:00Z,2026-10-02T08:30:00Z
+6929,"Major Dhyan Chand National Stadium, Delhi - DPCC",28.611281,77.237738,CPCB,Delhi Pollution Control Committee,12235047,2018-08-10T07:00:00Z,2026-10-01T12:30:00Z
+6931,"Dwarka-Sector 8, Delhi - DPCC",28.5710274,77.0719006,CPCB,Delhi Pollution Control Committee,20150,2018-08-10T06:15:00Z,2026-10-02T08:30:00Z
+6932,"Alipur, Delhi - DPCC",28.815329,77.15301,CPCB,Delhi Pollution Control Committee,12235698,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+6934,"Dr. Karni Singh Shooting Range, Delhi - DPCC",28.498571,77.26484,CPCB,Delhi Pollution Control Committee,19919,2018-08-10T06:30:00Z,2026-10-02T08:30:00Z
+6936,"Arya Nagar, Bahadurgarh - HSPCB",28.6701,76.9254,CPCB,Haryana State Pollution Control Board,14233904,2019-02-13T00:15:00Z,2026-10-02T08:30:00Z
+6938,"Vivek Vihar, Delhi - DPCC",28.672342,77.31526,CPCB,Delhi Pollution Control Committee,12235133,2018-12-15T15:15:00Z,2026-10-02T08:30:00Z
+6957,"Jawaharlal Nehru Stadium, Delhi - DPCC",28.58028,77.233829,CPCB,Delhi Pollution Control Committee,20020,2018-08-10T06:00:00Z,2026-10-02T08:30:00Z
+6960,"Patparganj, Delhi - DPCC",28.623748,77.287205,CPCB,Delhi Pollution Control Committee,20049,2018-08-10T06:00:00Z,2026-10-02T08:30:00Z
+6980,"Sector-1, Noida - UPPCB",28.589247,77.321962,CPCB,Uttar Pradesh Pollution Control Board,12235951,2019-06-28T05:45:00Z,2026-10-02T08:30:00Z
+7005,"Loni, Ghaziabad - UPPCB",28.757294,77.278792,CPCB,Uttar Pradesh Pollution Control Board,12235787,2019-04-27T11:45:00Z,2026-10-02T08:30:00Z
+7044,"R K Puram, Delhi - DPCC",28.563262000000005,77.186937,caaqm,Unknown Governmental Organization,20411,2018-08-10T06:00:00Z,2022-10-31T00:45:00Z
+8118,New Delhi,28.63576,77.22445,AirNow,Unknown Governmental Organization,23534,2016-11-09T19:00:00Z,2026-09-24T10:30:00Z
+8235,"Jahangirpuri, Delhi - DPCC",28.73282,77.170633,CPCB,Delhi Pollution Control Committee,23997,2018-08-10T07:00:00Z,2026-10-02T08:30:00Z
+8239,"Okhla Phase-2, Delhi - DPCC",28.530785,77.271255,CPCB,Delhi Pollution Control Committee,12235074,2018-08-22T11:45:00Z,2026-10-02T08:30:00Z
+8365,"Nehru Nagar, Delhi - DPCC",28.56789,77.250515,CPCB,Delhi Pollution Control Committee,12235083,2018-08-10T06:00:00Z,2026-10-02T08:30:00Z
+8472,"Bawana, Delhi - DPCC",28.7762,77.051074,CPCB,Delhi Pollution Control Committee,12235294,2018-08-10T06:15:00Z,2026-10-02T08:30:00Z
+8475,"Sonia Vihar, Delhi - DPCC",28.710508,77.249485,CPCB,Delhi Pollution Control Committee,35050,2018-08-10T08:15:00Z,2026-10-02T08:30:00Z
+8915,"Wazirpur, Delhi - DPCC",28.699793,77.165453,CPCB,Delhi Pollution Control Committee,12235124,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+8917,"Ashok Vihar, Delhi - DPCC",28.695381,77.181665,CPCB,Delhi Pollution Control Committee,12235002,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+10484,"Sri Aurobindo Marg, Delhi - DPCC",28.531346,77.190156,CPCB,Delhi Pollution Control Committee,34772,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+10485,"Narela, Delhi - DPCC",28.822836,77.101981,CPCB,Delhi Pollution Control Committee,34790,2018-08-10T05:45:00Z,2026-10-02T08:30:00Z
+10486,"Mundka, Delhi - DPCC",28.684678,77.076574,CPCB,Delhi Pollution Control Committee,12235303,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+10487,"Anand Vihar, Delhi - DPCC",28.646835,77.316032,caaqm,Unknown Governmental Organization,34771,2018-08-13T11:00:00Z,2021-09-20T07:45:00Z
+10488,"Najafgarh, Delhi - DPCC",28.570173,76.933762,CPCB,Delhi Pollution Control Committee,34774,2018-12-15T15:00:00Z,2026-10-02T08:30:00Z
+10489,"ITO, Delhi - CPCB",28.628624,77.24106,caaqm,Unknown Governmental Organization,35016,2020-01-20T08:15:00Z,2022-10-31T01:45:00Z
+10820,"Sector 30, Faridabad - HSPCB",28.4417,77.3217,CPCB,Haryana State Pollution Control Board,12236236,2025-02-18T20:15:00Z,2026-10-02T08:30:00Z
+10825,"Sector-51, Gurugram - HSPCB",28.4227,77.0667,CPCB,Haryana State Pollution Control Board,36181,2020-03-11T09:00:00Z,2026-10-02T08:30:00Z
+10831,"Rohini, Delhi - DPCC",28.732528,77.11992,CPCB,Delhi Pollution Control Committee,12235092,2018-08-10T06:00:00Z,2026-10-02T08:30:00Z
+10900,"Teri Gram, Gurugram - HSPCB",28.4275,77.1465,CPCB,Haryana State Pollution Control Board,36539,2020-03-30T16:00:00Z,2026-10-02T08:30:00Z
+10921,"NISE Gwal Pahari, Gurugram - IMD",28.422681,77.148944,CPCB,India Meteorological Department,12235707,2018-11-16T09:00:00Z,2026-10-02T08:30:00Z
+11603,"Chandni Chowk, Delhi - IITM",28.656756,77.227234,CPCB,Indian Institute of Tropical Meteorology,39410,2020-11-13T12:15:00Z,2026-10-02T08:30:00Z
+11607,"Lodhi Road, Delhi - IITM",28.588333,77.221667,CPCB,Indian Institute of Tropical Meteorology,12236376,2020-11-13T12:00:00Z,2025-12-27T06:00:00Z
