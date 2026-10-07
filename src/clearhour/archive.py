@@ -73,8 +73,10 @@ def to_hourly(readings: pd.DataFrame, *, stamped_at_end: bool = True, valid_max:
     r = readings.dropna(subset=["value"])
     r = r[(r["value"] >= 0) & (r["value"] <= valid_max)]
     shift = pd.Timedelta(minutes=1) if stamped_at_end else pd.Timedelta(0)
+    # Floor on the IST clock: IST is UTC+5:30, so UTC hours would cut every IST hour in half.
+    ist_hour = (r["ts_utc"] - shift).dt.tz_convert(IST).dt.floor("h")
     hourly = (
-        r.assign(hour_utc=(r["ts_utc"] - shift).dt.floor("h"))
+        r.assign(hour_utc=ist_hour.dt.tz_convert("UTC"))
         .groupby(["location_id", "hour_utc"], as_index=False)
         .agg(pm25=("value", "mean"), n=("value", "size"))
     )

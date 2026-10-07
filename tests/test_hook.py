@@ -62,6 +62,16 @@ def test_end_stamped_files_land_in_the_right_ist_hour(tmp_path):
     assert 0 < nums["cut_pct"] < 100
 
 
+def test_quarter_hour_readings_bin_to_ist_clock_hours():
+    # Real archive data is 15-minute and end-stamped; IST is UTC+5:30, so UTC hour bins would straddle IST hours.
+    stamps = pd.date_range("2025-11-12 08:15", periods=4, freq="15min", tz="Asia/Kolkata")
+    readings = pd.DataFrame({"location_id": 1, "ts_utc": stamps.tz_convert("UTC"), "value": [100.0] * 3 + [200.0]})
+    hourly = to_hourly(readings)
+    assert len(hourly) == 1
+    assert hourly["hour_ist"].iloc[0] == pd.Timestamp("2025-11-12 08:00", tz="Asia/Kolkata")
+    assert hourly["n"].iloc[0] == 4 and hourly["pm25"].iloc[0] == 125.0
+
+
 def test_low_coverage_stations_are_dropped(tmp_path):
     frames = []
     for day in pd.date_range("2025-11-01", "2025-12-31", freq="D"):
