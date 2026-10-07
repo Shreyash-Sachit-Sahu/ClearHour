@@ -71,9 +71,13 @@ docs/DECISIONS.md        one line per shortcut or deviation
   1. Every school hour ≤ 90 → "Air is fine for outdoor activity today."
   2. Every school hour > 250 → "No safe window today. Keep assembly, PE and recess indoors."
   3. Otherwise the Clear Hour is the cleanest school hour; also move assembly indoors if its hour is > 120.
-- Model: one LightGBM regressor across stations, station as a categorical feature. Split by time, never shuffle:
-  train on Oct–Jan of 2022–23 to 2024–25, test on Oct 2025–Jan 2026. Baselines: persistence and raw CAMS.
-- Headline metric: share of test days where the chosen hour is among the two cleanest actual school hours.
+- Data: OpenAQ holds no Delhi CPCB data from about 2020 to January 2025. Station data resumes in
+  February 2025; the US Embassy monitor (8118) is the only continuous long record.
+- Model: one LightGBM regressor across stations, station as a categorical feature. Evaluate walk-forward on
+  the 2025–26 winter: for each week from 10 Nov 2025 to 30 Jan 2026, train on everything before that week and
+  predict its school mornings. Never shuffle hours. Baselines: persistence and raw CAMS. The deployed model
+  trains on all data to date, and October 2026 mornings are the live check.
+- Headline metric: share of test mornings where the chosen hour is among the two cleanest actual school hours.
 - Report concentration differences only. Never claim health outcomes.
 
 ## Data sources and their quirks
