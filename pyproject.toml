@@ -1,0 +1,43 @@
+[project]
+name = "clearhour"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Shreyash-Sachit-Sahu", email = "137154025+Shreyash-Sachit-Sahu@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.43.109",
+    "lightgbm>=4.7,<4.8",
+    "matplotlib>=3.11,<3.12",
+    "numpy>=2,<3",
+    "openaq>=1.1.0",
+    "pandas>=3.0,<3.1",
+    "pyarrow>=25.0.1",
+    "requests>=2.34.2",
+    "scikit-learn>=1.9,<1.10",
+]
+
+[project.scripts]
+clearhour = "clearhour:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "cfn-lint>=1.57.2",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

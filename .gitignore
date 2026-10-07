@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.env
+.aws-sam/
+data/raw/
+data/processed/
+*.part
