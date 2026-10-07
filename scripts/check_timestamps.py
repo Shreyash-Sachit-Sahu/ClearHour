@@ -3,9 +3,12 @@
 CPCB repeats each hourly value across its four 15-minute slots, so a value alone rarely identifies one API
 period. Instead each archive row is lined up with the API period that ends at its timestamp, and with the one
 that starts there; the convention is the one under which every lined-up value is the same.
+
+Usage: check_timestamps.py [location_id [YYYY-MM-DD]]   (default: the station picked below, on DAY)
 """
 
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -19,17 +22,20 @@ STILL_REPORTING = pd.Timestamp("2026-09-01", tz="UTC")
 MIN_MATCHES = 10
 
 
-def pick_station() -> tuple[pd.Series, pd.DataFrame]:
-    """Still-reporting station with the longest history that has an archive file for DAY."""
+def pick_station(day: pd.Timestamp, location_id: int | None) -> tuple[pd.Series, pd.DataFrame]:
+    """The given station, else the still-reporting station with the longest history that has a file for day."""
     s = pd.read_csv("data/stations.csv")
-    s = s[pd.to_datetime(s["last_utc"], utc=True) >= STILL_REPORTING]
+    if location_id is None:
+        s = s[pd.to_datetime(s["last_utc"], utc=True) >= STILL_REPORTING]
+    else:
+        s = s[s["location_id"] == location_id]
     s = s.assign(first=pd.to_datetime(s["first_utc"], utc=True)).sort_values("first")
     for _, st in s.iterrows():
-        keys = list_month_keys(int(st["location_id"]), DAY.year, DAY.month)
-        keys = [k for k in keys if f"{DAY:%Y%m%d}" in k]
+        keys = list_month_keys(int(st["location_id"]), day.year, day.month)
+        keys = [k for k in keys if f"{day:%Y%m%d}" in k]
         if keys:
             return st, pd.concat([read_pm25(fetch(k, RAW)) for k in keys], ignore_index=True)
-    raise SystemExit(f"No still-reporting station has an archive file for {DAY:%Y-%m-%d}")
+    raise SystemExit(f"No archive file for {day:%Y-%m-%d} at {location_id or 'any still-reporting station'}")
 
 
 def api_periods(sensor_id: int, lo: pd.Timestamp, hi: pd.Timestamp) -> pd.DataFrame:
@@ -53,14 +59,16 @@ def line_up(archive: pd.DataFrame, api: pd.DataFrame, edge: str) -> pd.DataFrame
 
 
 def main() -> None:
-    st, archive = pick_station()
+    location_id = int(sys.argv[1]) if len(sys.argv) > 1 else None
+    day = pd.Timestamp(sys.argv[2]) if len(sys.argv) > 2 else DAY
+    st, archive = pick_station(day, location_id)
     archive = archive.dropna(subset=["value"])
     lo, hi = archive["ts_utc"].min() - pd.Timedelta(hours=2), archive["ts_utc"].max() + pd.Timedelta(hours=2)
     api = api_periods(int(st["pm25_sensor_id"]), lo, hi)
 
     print(f"Station {st['location_id']} {st['name']} (sensor {st['pm25_sensor_id']}, since {st['first']:%Y-%m-%d})")
     intervals = sorted(set(api["end"] - api["start"]))
-    print(f"{DAY:%Y-%m-%d}: {len(archive)} archive rows, {len(api)} API rows, intervals {intervals}")
+    print(f"{day:%Y-%m-%d}: {len(archive)} archive rows, {len(api)} API rows, intervals {intervals}")
     lined = {stamp: line_up(archive, api, stamp.lower()) for stamp in ("END", "START")}
     for stamp, m in lined.items():
         print(f"if the archive stamps the {stamp}: {len(m)} rows line up, {m['same_value'].sum()} with the same value")
