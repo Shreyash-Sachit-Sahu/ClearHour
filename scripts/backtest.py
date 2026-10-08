@@ -2,6 +2,9 @@
 
 Winter: train on every earlier day, test each week from Monday 10 Nov 2025 to Monday 26 Jan 2026 (rows up to
 31 Jan 2026). October: train on everything before 1 Oct 2026 and test its first week, the air the live demo runs in.
+Every day appears once per reading blackout (BLACKOUTS_H). Two models, as in production: the fresh one trains and
+tests on blackout 0, the stale one trains on all the stale blackouts and is scored on each. Blackout 0 is the top
+level of backtest.json (the README's numbers); the rest go under by_blackout.
 """
 
 import json
@@ -13,7 +16,7 @@ from config import model_stations
 
 from clearhour.constants import ASSEMBLY_HOUR, IST, TARGET_HOURS
 from clearhour.decide import ASSEMBLY_INDOOR_MIN, decide
-from clearhour.features import build_rows
+from clearhour.features import BLACKOUTS_H, FRESH_LEAD_H, STALE_BLACKOUTS_H, build_rows
 from clearhour.model import evaluate, walk_forward, with_station_category
 
 MONDAYS = list(pd.date_range("2025-11-10", "2026-01-26", freq="7D", tz=IST))
@@ -28,22 +31,28 @@ ASSEMBLY_COL = TARGET_HOURS.index(ASSEMBLY_HOUR)
 def school_day_matrix(pred: pd.DataFrame) -> dict[str, np.ndarray]:
     """The station-days evaluate() scores (Mon-Fri, all six school hours observed), as arrays with one row per
     station-day and one column per school hour 08..13: the actual value, the model forecast and CAMS.
-    "v_last" is one value per station-day: the latest reading the forecast started from."""
-    cols = ["target", "pred", "cams_t", "v_last"]
+    "v_last" and "lead_h" are one value per station-day: the latest reading the forecast started from, and the
+    08:00 lead from it."""
+    cols = ["target", "pred", "cams_t", "v_last", "lead_h"]
     ok = pred[pred["target"].notna() & (pred["day"].dt.dayofweek < 5)]
     size = ok.groupby(["location_id", "day"], observed=True)["target"].transform("size")
     full = ok[size == len(TARGET_HOURS)]
     wide = full.set_index(["location_id", "day", "target_hour"])[cols].unstack("target_hour")
     m = {c: wide[c][TARGET_HOURS].to_numpy(dtype=float) for c in cols}
     m["v_last"] = m["v_last"][:, ASSEMBLY_COL]
+    m["lead_h"] = m["lead_h"][:, ASSEMBLY_COL]
     return m
 
 
 def rule_decisions(m: dict[str, np.ndarray], use_latest: bool = True) -> list[dict]:
-    """The production rule (clearhour.decide) on each station-day's forecast, with or without the latest reading."""
+    """The production rule (clearhour.decide) on each station-day's forecast. As in production, the latest
+    reading makes the assembly call only when it's from the night (08:00 lead up to FRESH_LEAD_H)."""
     return [
-        decide(dict(zip(TARGET_HOURS, row, strict=True)), latest=float(now) if use_latest else None)
-        for row, now in zip(m["pred"], m["v_last"], strict=True)
+        decide(
+            dict(zip(TARGET_HOURS, row, strict=True)),
+            latest=float(now) if use_latest and lead <= FRESH_LEAD_H else None,
+        )
+        for row, now, lead in zip(m["pred"], m["v_last"], m["lead_h"], strict=True)
     ]
 
 
@@ -160,24 +169,52 @@ def against_always_13(pred: pd.DataFrame) -> dict:
     }
 
 
-def print_scores(label: str, res: dict) -> None:
-    mae = res["mae"]
-    print(
-        f"\n== {label}: MAE model {mae['model']} · persistence {mae['persistence']} · CAMS {mae['cams']}"
-        f" · yesterday {mae['yesterday']}"
-    )
-    print(pd.DataFrame(res["strategies"]).to_string(index=False))
-    flag = res["assembly_flag"]
-    print(
-        f"assembly flag ({flag['station_days']} station-days, actually above {ASSEMBLY_INDOOR_MIN} on "
-        f"{flag['actual_indoor_share']}):"
-    )
-    for name in ("model", "persistence"):
-        print(f"  {name:<11} {flag[name]}")
-    tables = {"production rule": res["kinds"], "forecast only": res["kinds_forecast_only"]}
-    print("kinds (rows: called, columns: what the air turned out to be):")
-    both = pd.concat({k: pd.DataFrame(v).T.reindex(index=KINDS, columns=KINDS) for k, v in tables.items()}, axis=1)
-    print(both.to_string())
+def no_nan(x):
+    """JSON has no NaN: a metric with no data (yesterday's MAE once yesterday is blacked out) is written as null."""
+    if isinstance(x, float) and x != x:
+        return None
+    if isinstance(x, dict):
+        return {k: no_nan(v) for k, v in x.items()}
+    if isinstance(x, list):
+        return [no_nan(v) for v in x]
+    return x
+
+
+def blackout_table(scores: dict[int, dict]) -> pd.DataFrame:
+    """One row per blackout: forecast error, and the decisions of the production rule (the clearhour row)."""
+    rows = []
+    for b, r in scores.items():
+        strategies = {s["strategy"]: s for s in r["strategies"]}
+        ch = strategies["clearhour"]
+        rows.append(
+            {
+                "blackout_h": b,
+                "mae_model": r["mae"]["model"],
+                "mae_persist": r["mae"]["persistence"],
+                "mae_cams": r["mae"]["cams"],
+                "mae_yday": r["mae"]["yesterday"],
+                "hit": ch["hit_rate_top2"],
+                "median_cut": ch["median_cut"],
+                "pooled_cut": ch["pooled_cut"],
+                "always_13_pooled": strategies["always_13"]["pooled_cut"],
+                "worse": ch["worse_than_assembly"],
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def stale_hour_rule(scores: dict[int, dict]) -> dict:
+    """Fixed in advance (Phase 2d): keep STALE_CLEAR_HOUR = 13 if always_13's pooled cut is at least the stale
+    model's own pick's at four or more of the six stale blackouts; otherwise None (keep the forecast's pick)."""
+    table = blackout_table({b: scores[b] for b in STALE_BLACKOUTS_H}).set_index("blackout_h")
+    pairs = {str(b): {"model": r.pooled_cut, "always_13": r.always_13_pooled} for b, r in table.iterrows()}
+    wins = int((table["always_13_pooled"] >= table["pooled_cut"]).sum())
+    return {
+        "always_13_at_least_model": wins,
+        "of": len(table),
+        "stale_clear_hour": 13 if wins >= 4 else None,
+        "pooled_cut_pairs": pairs,
+    }
 
 
 def main() -> None:
@@ -186,27 +223,46 @@ def main() -> None:
     hourly = hourly[hourly["location_id"].isin(stations)]
     met = pd.read_parquet("data/processed/meteo.parquet")
     days = pd.date_range(pd.Timestamp("2025-10-03", tz=IST), hourly["hour_ist"].max().normalize(), freq="D")
-    rows = with_station_category(build_rows(hourly, met, days), stations)
-    winter = rows[rows["day"] <= WINTER_END]
-    pred = walk_forward(winter, MONDAYS)
-    res = evaluate(pred) | decision_scores(pred)
+    rows = pd.concat(
+        [
+            with_station_category(build_rows(hourly, met, days, blackout_h=b), stations).assign(blackout_h=b)
+            for b in BLACKOUTS_H
+        ],
+        ignore_index=True,
+    )
+    # Two models: the fresh one sees blackout 0 only; the stale one trains on every stale blackout together.
+    fresh, stale = rows[rows["blackout_h"] == 0], rows[rows["blackout_h"].isin(STALE_BLACKOUTS_H)]
+    winter_pred = pd.concat(
+        [walk_forward(part[part["day"] <= WINTER_END], MONDAYS) for part in (fresh, stale)], ignore_index=True
+    )
+    oct_pred = pd.concat([walk_forward(part, [OCTOBER]) for part in (fresh, stale)], ignore_index=True)
+    scores = {}
+    for b in BLACKOUTS_H:
+        pw, po = winter_pred[winter_pred["blackout_h"] == b], oct_pred[oct_pred["blackout_h"] == b]
+        october = {"test_days": sorted({d.date().isoformat() for d in po["day"]})}
+        # The archive has no September 2026, so long blackouts leave 1-2 Oct without readings: score what exists.
+        if not po.empty and evaluate(po)["station_days"]:
+            october = evaluate(po) | decision_scores(po) | october
+        scores[b] = evaluate(pw) | decision_scores(pw) | {"october_2026": october}
 
+    pred, res = winter_pred[winter_pred["blackout_h"] == 0], scores[0]  # blackout 0: the README's numbers
     s = strategy_table(pred).set_index("strategy")
     assert s.loc["model", "station_days"] == res["station_days"]
     for k in ("model", "cams", "always_12", "always_13"):
         assert s.loc[k, "hit_rate_top2"] == res["hit_rate_top2"][k], k
     for k in ("median", "mean"):
         assert abs(s.loc["model", f"{k}_cut"] - res["realised_cut_vs_assembly"][k]) <= 0.001, k
-
-    oct_pred = walk_forward(rows, [OCTOBER])
-    october = evaluate(oct_pred) | decision_scores(oct_pred)
-    october["test_days"] = sorted({d.date().isoformat() for d in oct_pred["day"]})
-    res["october_2026"] = october
+    # The fresh model is the P2-T3 model on the P2-T3 rows, so it must reproduce P2-T3 exactly.
+    assert res["mae"]["model"] == 49.1 and s.loc["clearhour", "pooled_cut"] == 0.250, "fresh model moved from P2-T3"
 
     extra = against_always_13(pred)
+    rule = stale_hour_rule(scores)
     weeks = sorted(str(w.date()) for w in pred["week"].unique())
+    by_blackout = {str(b): scores[b] for b in BLACKOUTS_H[1:]}
     result = {"stations": len(stations), "station_ids": stations, "test_weeks": weeks, **res, **extra}
-    (OUT / "backtest.json").write_text(json.dumps(result, indent=2) + "\n")
+    result["by_blackout"] = by_blackout
+    result["stale_clear_hour_rule"] = rule
+    (OUT / "backtest.json").write_text(json.dumps(no_nan(result), indent=2, allow_nan=False) + "\n")
     pd.DataFrame(res["mae_by_lead"]).to_csv(OUT / "backtest_by_lead.csv", index=False)
 
     mae, hit = res["mae"], res["hit_rate_top2"]
@@ -225,9 +281,25 @@ def main() -> None:
         f"{extra['model_hit_rate_top2_where_always_13_misses']} · model picks 13:00 on {extra['share_model_picks_13']}"
         " of all station-days"
     )
-    print_scores("Winter 2025-26", res)
-    print_scores(f"October 2026 ({', '.join(october['test_days'])}; {october['rows']} test rows)", october)
-    print("\nwrote outputs/backtest.json and outputs/backtest_by_lead.csv")
+    print("\nwinter 2025-26 by reading blackout (h), fresh model at 0, stale model from 6: MAE, and the production")
+    print("rule's (forecast pick's) hit rate and cuts, with always_13's pooled cut beside it")
+    print(blackout_table({b: scores[b] for b in BLACKOUTS_H}).to_string(index=False))
+    flag = res["assembly_flag"]
+    print(
+        f"assembly flag at blackout 0 ({flag['station_days']} station-days, above {ASSEMBLY_INDOOR_MIN} on "
+        f"{flag['actual_indoor_share']}):"
+    )
+    for name in ("model", "persistence"):
+        print(f"  {name:<11} {flag[name]}")
+    print("\nOctober 2026 by reading blackout (h):")
+    scored = {b: scores[b]["october_2026"] for b in BLACKOUTS_H if "strategies" in scores[b]["october_2026"]}
+    print(blackout_table(scored).to_string(index=False))
+    print(f"test days by blackout: { {b: scores[b]['october_2026']['test_days'] for b in BLACKOUTS_H} }")
+    print(
+        f"\nstale Clear Hour rule: always_13 >= the stale model's pick at {rule['always_13_at_least_model']}/"
+        f"{rule['of']} stale blackouts -> STALE_CLEAR_HOUR = {rule['stale_clear_hour']}"
+    )
+    print("wrote outputs/backtest.json and outputs/backtest_by_lead.csv")
 
     stops = []
     if mae["model"] >= mae["yesterday"]:
