@@ -4,7 +4,7 @@ from datetime import date
 from clearhour import openaq_api
 from clearhour.decide import decide, message_params, render, slot_label
 from clearhour.handlers.ingest import hourly_means, lookback_hours
-from clearhour.whatsapp import parse_sns, send, template_payload
+from clearhour.whatsapp import parse_sns, send, template_payload, text_payload
 
 
 def _hours(*vals):
@@ -143,3 +143,21 @@ def test_monitor_list_takes_the_pm25_sensor_that_reported_last(monkeypatch):
     monkeypatch.setattr(openaq_api.time, "sleep", lambda s: None)  # skip the rate-limit pause
     assert openaq_api.newest_sensor([35, 12234787]) == 12234787
     assert openaq_api.newest_sensor([7]) == 7  # a single sensor needs no lookup
+
+
+def test_eum_sends_to_the_number_in_e164(monkeypatch):
+    # EUM answers bare digits with "Invalid destination phone number"; WhatsApp gives them without the "+"
+    sent = {}
+
+    class FakeSocialMessaging:
+        def send_whatsapp_message(self, **kwargs):
+            sent.update(json.loads(kwargs["message"]))
+            return {"messageId": "m-1"}
+
+    monkeypatch.setenv("WA_MODE", "eum")
+    monkeypatch.setenv("WA_PHONE_NUMBER_ID", "phone-number-id-test")
+    monkeypatch.setattr("clearhour.whatsapp.boto3.client", lambda name: FakeSocialMessaging())
+    assert send(text_payload("919999990123", "hi")) == "m-1"
+    assert sent["to"] == "+919999990123"
+    send(text_payload("+919999990123", "hi"))
+    assert sent["to"] == "+919999990123"  # already E.164: left alone

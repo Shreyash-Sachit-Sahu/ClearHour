@@ -33,6 +33,9 @@ def send(payload: dict) -> str:
     mode = os.environ.get("WA_MODE", "dry_run")
     version = os.environ.get("META_API_VERSION", DEFAULT_META_API_VERSION)
     if mode == "eum":
+        # EUM rejects bare digits ("Invalid destination phone number"); WhatsApp sends, and we store, no "+"
+        to = str(payload.get("to", ""))
+        payload = {**payload, "to": to if to.startswith("+") else "+" + to}
         resp = boto3.client("socialmessaging").send_whatsapp_message(
             originationPhoneNumberId=os.environ["WA_PHONE_NUMBER_ID"],
             message=json.dumps(payload).encode(),
