@@ -16,6 +16,10 @@ MAX_STALENESS_H = 6  # a station may lag the cutoff by at most this many hours
 # trains on these blackouts (hours of missing readings before 04:00) and serves whichever one the data shows.
 BLACKOUTS_H = (0, 6, 12, 18, 24, 30, 36)
 MAX_BLACKOUT_H = BLACKOUTS_H[-1]
+# One model trained on every blackout lost too much on fresh mornings, so there are two: the fresh model (blackout 0)
+# and the stale model (these blackouts). The forecast picks one by the morning's blackout.
+STALE_FROM_H = 6
+STALE_BLACKOUTS_H = tuple(b for b in BLACKOUTS_H if b >= STALE_FROM_H)
 FRESH_LEAD_H = ASSEMBLY_HOUR - LATEST_OBS_HOUR + MAX_STALENESS_H  # 08:00 leads up to this: a reading from the night
 MET_COLUMNS = ["pm2_5", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "boundary_layer_height"]
 

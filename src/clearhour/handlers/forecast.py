@@ -19,17 +19,22 @@ from clearhour import features, meteo, store
 from clearhour.constants import IST
 
 _s3 = boto3.client("s3")
-_MODEL: tuple[lgb.Booster, dict] | None = None
+MODEL_FILES = {
+    "fresh": ("models/clearhour-lgbm.txt", "models/features.json"),
+    "stale": ("models/clearhour-lgbm-stale.txt", "models/features-stale.json"),
+}
+_MODELS: dict[str, tuple[lgb.Booster, dict]] = {}
 
 
-def model() -> tuple[lgb.Booster, dict]:
-    global _MODEL
-    if _MODEL is None:
+def model(kind: str = "fresh") -> tuple[lgb.Booster, dict]:
+    """The fresh model serves mornings that have the night's readings; the stale model, mornings that don't."""
+    if kind not in _MODELS:
         bucket = os.environ["DATA_BUCKET"]
-        text = _s3.get_object(Bucket=bucket, Key="models/clearhour-lgbm.txt")["Body"].read().decode()
-        meta = json.loads(_s3.get_object(Bucket=bucket, Key="models/features.json")["Body"].read())
-        _MODEL = (lgb.Booster(model_str=text), meta)
-    return _MODEL
+        text_key, meta_key = MODEL_FILES[kind]
+        text = _s3.get_object(Bucket=bucket, Key=text_key)["Body"].read().decode()
+        meta = json.loads(_s3.get_object(Bucket=bucket, Key=meta_key)["Body"].read())
+        _MODELS[kind] = (lgb.Booster(model_str=text), meta)
+    return _MODELS[kind]
 
 
 def stations() -> list[dict]:
@@ -66,15 +71,16 @@ def archive_obs(day: pd.Timestamp) -> pd.DataFrame:
 def handler(event, context):
     day = run_day(event)
     source = event.get("source", "live")
-    booster, meta = model()
-    if meta["features"] != features.FEATURES:
-        raise RuntimeError("model was trained on a different feature list; retrain")
     hourly = live_obs(day) if source == "live" else archive_obs(day)
     met = meteo.fetch((day - pd.Timedelta(days=1)).date().isoformat(), day.date().isoformat(), live=source == "live")
     blackout = features.blackout_for(hourly, day)
-    trained_up_to = max(meta.get("blackouts_h", [0]))
-    if blackout > trained_up_to:
-        raise RuntimeError(f"the newest reading is {blackout} h before 04:00 IST; the model covers {trained_up_to} h")
+    kind = "fresh" if blackout < features.STALE_FROM_H else "stale"
+    booster, meta = model(kind)
+    if meta["features"] != features.FEATURES:
+        raise RuntimeError("model was trained on a different feature list; retrain")
+    covers = max(meta.get("blackouts_h", [0]))
+    if kind == "stale" and blackout > covers:
+        raise RuntimeError(f"the newest reading is {blackout} h before 04:00 IST; the stale model covers {covers} h")
     rows = features.build_rows(hourly, met, [day], blackout_h=blackout)
     if rows.empty:
         raise RuntimeError(f"no station had a reading within {features.MAX_STALENESS_H} h of the newest one")
@@ -93,6 +99,7 @@ def handler(event, context):
         "median_lead_h": float(rows["lead_h"].median()),
         "blackout_h": blackout,
         "obs_through": (day + pd.Timedelta(hours=features.LATEST_OBS_HOUR - blackout)).isoformat(),
+        "model": kind,
         "stations": preds,
         "latest": latest,
     }
@@ -107,6 +114,7 @@ def handler(event, context):
                 "source": source,
                 "stations": len(preds),
                 "blackout_h": blackout,
+                "model": kind,
                 "median_lead_h": body["median_lead_h"],
             }
         )

@@ -17,6 +17,7 @@ from boto3.dynamodb.conditions import Key
 
 from clearhour import store
 from clearhour.constants import TARGET_HOURS
+from clearhour.decide import STALE_CLEAR_HOUR
 
 PREFIX = "site/data/"
 ALERTS_PER_SCHOOL = 14
@@ -71,6 +72,8 @@ def publish_day(fc: dict, decisions: dict, schools: list[dict]) -> str:
         "generated_at": fc["generated_at"],
         "median_lead_h": fc.get("median_lead_h"),
         "obs_through": fc.get("obs_through"),
+        "model": fc.get("model", "fresh"),
+        "stale_hour": STALE_CLEAR_HOUR if fc.get("model") == "stale" else None,
         "hours": TARGET_HOURS,
         "stations": [
             [s["location_id"], s["name"], s["lat"], s["lon"], latest.get(str(s["location_id"]))] for s in stations()

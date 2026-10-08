@@ -58,25 +58,26 @@ def _seed_model_and_obs(monkeypatch, day: pd.Timestamp, obs_until: pd.Timestamp 
     hourly, met = make_synthetic(n_stations=3, start="2025-10-01", end="2025-11-20")
     stations = [int(s) for s in sorted(hourly["location_id"].unique())]  # plain ints: they go into JSON
     train_days = pd.date_range("2025-10-03", "2025-11-10", tz="Asia/Kolkata")
-    rows = pd.concat(
-        [with_station_category(features.build_rows(hourly, met, train_days, blackout_h=b), stations) for b in (0, 24)],
-        ignore_index=True,
-    )
-    assert not rows.empty
-    booster = fit(rows, num_rounds=30)
     s3 = boto3.client("s3")
-    s3.put_object(Bucket=BUCKET, Key="models/clearhour-lgbm.txt", Body=booster.model_to_string().encode())
-    s3.put_object(
-        Bucket=BUCKET,
-        Key="models/features.json",
-        Body=json.dumps({"features": features.FEATURES, "stations": stations, "blackouts_h": [0, 24]}).encode(),
-    )
+    for suffix, blackouts in (("", [0]), ("-stale", [12, 24])):  # the fresh and the stale model
+        rows = pd.concat(
+            [
+                with_station_category(features.build_rows(hourly, met, train_days, blackout_h=b), stations)
+                for b in blackouts
+            ],
+            ignore_index=True,
+        )
+        assert not rows.empty
+        booster = fit(rows, num_rounds=30)
+        meta = {"features": features.FEATURES, "stations": stations, "blackouts_h": blackouts}
+        s3.put_object(Bucket=BUCKET, Key=f"models/clearhour-lgbm{suffix}.txt", Body=booster.model_to_string().encode())
+        s3.put_object(Bucket=BUCKET, Key=f"models/features{suffix}.json", Body=json.dumps(meta).encode())
     until = obs_until if obs_until is not None else day + pd.Timedelta(hours=5)
     recent = hourly[(hourly["hour_ist"] >= day - pd.Timedelta(days=2)) & (hourly["hour_ist"] < until)]
     for r in recent.itertuples():
         store.put_obs(int(r.location_id), r.hour_ist.tz_convert("UTC").isoformat(), float(r.pm25), 4)
     monkeypatch.setattr(forecast, "_s3", s3)
-    monkeypatch.setattr(forecast, "_MODEL", None)
+    monkeypatch.setattr(forecast, "_MODELS", {})
     monkeypatch.setattr(forecast, "stations", lambda: STATIONS)
     monkeypatch.setattr(forecast.meteo, "fetch", lambda *a, **k: met)
     return forecast
@@ -91,6 +92,7 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     assert out["stations"] == 3 and out["forecast_key"] == "runs/2025-11-13/live/forecast.json"
     fc = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=out["forecast_key"])["Body"].read())
     assert set(fc["latest"]) == set(fc["stations"])  # every forecast station carries its latest reading
+    assert fc["model"] == "fresh" and fc["blackout_h"] == 0
 
     store.table().put_item(
         Item={"pk": "SCHOOL#node/1", "sk": "PROFILE", "name": "सर्वोदय विद्यालय", "phone": "919999999999", "lang": "hi"}
@@ -135,8 +137,12 @@ def test_stale_readings_still_forecast_but_leave_assembly_to_the_forecast(aws, m
     forecast = _seed_model_and_obs(monkeypatch, day, obs_until=day - pd.Timedelta(hours=12))  # newest: 11:00 yesterday
     out = forecast.handler({"source": "live", "as_of": "2025-11-13T05:30:00+05:30"}, None)
     fc = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=out["forecast_key"])["Body"].read())
-    assert fc["blackout_h"] == 17 and fc["obs_through"].startswith("2025-11-12T11:00")
+    assert fc["blackout_h"] == 17 and fc["obs_through"].startswith("2025-11-12T11:00") and fc["model"] == "stale"
     assert fc["latest"] == {}  # nothing from the night, so no reading drives the assembly call
     monkeypatch.setattr(decide, "_s3", boto3.client("s3"))
     monkeypatch.setattr(decide, "schools", lambda: SCHOOLS)
-    assert decide.handler(out, None)["schools"] == 1
+    res = decide.handler(out, None)
+    assert res["schools"] == 1
+    decisions = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=res["decisions_key"])["Body"].read())
+    if decisions["node/1"]["kind"] == "clear_hour":
+        assert decisions["node/1"]["clear_hour"] == 13  # stale mornings name 1 PM

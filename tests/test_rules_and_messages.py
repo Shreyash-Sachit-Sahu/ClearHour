@@ -30,6 +30,14 @@ def test_latest_reading_makes_the_assembly_call_and_guards_fine():
     assert held == {"kind": "clear_hour", "clear_hour": 9, "assembly_indoors": True, "limit_outdoor": False}
 
 
+def test_a_fixed_hour_replaces_the_forecast_pick_on_stale_mornings():
+    hourly = _hours(300, 260, 220, 180, 150, 160)  # the forecast's cleanest is 12:00
+    assert decide(hourly)["clear_hour"] == 12
+    d = decide(hourly, fixed_hour=13)
+    assert d["clear_hour"] == 13 and d["limit_outdoor"] is True
+    assert decide(_hours(60, 70, 80, 90, 85, 75), fixed_hour=13)["kind"] == "fine"  # fine days name no hour
+
+
 def test_keep_short_advice_when_even_the_clear_hour_is_very_poor():
     d = decide(_hours(300, 260, 220, 180, 150, 160))
     en = message_params(d, "KV RK Puram", date(2025, 11, 13), "en")

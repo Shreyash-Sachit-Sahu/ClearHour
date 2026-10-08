@@ -55,12 +55,13 @@ def handler(event, context):
 
     decisions = {}
     all_schools = schools()
+    fixed = rules.STALE_CLEAR_HOUR if fc.get("model") == "stale" else None
     for sch in all_schools:
         hourly = school_hourly(sch, fc["stations"])
         if hourly:
             now = school_latest(sch, fc.get("latest", {}))
             decisions[sch["id"]] = {
-                **rules.decide(hourly, latest=now),
+                **rules.decide(hourly, latest=now, fixed_hour=fixed),
                 "name": sch["name"],
                 "lat": sch["lat"],
                 "lon": sch["lon"],
