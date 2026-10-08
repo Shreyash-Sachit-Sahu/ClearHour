@@ -1,3 +1,43 @@
+# Phase 3b brief: the README
+
+Read `CLAUDE.md` first. Run this after the WhatsApp handover is finished, or alongside it if that's waiting
+on Meta. Stop when it's committed and pushed.
+
+Judges read the README alongside the video. It leads with what a principal gets, then the honest numbers, then
+the AWS build. A fresh-eyes review checked the numbers against `outputs/backtest.json` and DECISIONS.md, and
+the Mermaid diagram renders.
+
+## R1: Write it
+
+1. Replace `README.md` with the Verbatim text below. Change only the `[FILL: …]` slots:
+   - **The two "Run it" slots:** the data and model scripts, in the order they run, one line each with what
+     each one writes; and the top-level folders, one line each.
+   - **Impeccable:** keep that line only if Shreyash ran Impeccable. Ask him if you don't know.
+   - **Not ready yet:** remove the Video item, the Blog item and the phone-screenshot line for now. We add
+     them on Saturday.
+2. Check every link and image path in the file against the repo, including `DECISIONS.md`, `docs/briefs/`
+   and the two images in `outputs/`. Fix a path only where the file really lives somewhere else.
+3. Every number in the README should match `outputs/backtest.json`, rounded as written. If one doesn't, stop
+   and show me; don't change it yourself.
+4. Add `LICENSE`: the standard MIT text, copyright 2026, in the name of the repo's git author.
+
+**Check:** push, then open the README on GitHub and confirm the Mermaid diagram and both images render.
+Commit: `docs: README and license`
+
+## R2: Report
+
+```
+README: pushed <yes>; Mermaid renders <yes/no>; images render <yes/no>
+Numbers checked against backtest.json: <all match / list>
+Slots filled: scripts <ok>; repo map <ok>; Impeccable line <kept/removed>
+Commit: <hash>
+```
+
+---
+
+### `README.md` (Verbatim except the `[FILL: …]` slots)
+
+````markdown
 # ClearHour
 
 **The cleanest hour of the school day, for 1,110 Delhi schools.** Every morning at 5:30, ClearHour forecasts
@@ -5,11 +45,12 @@ PM2.5 hour by hour across Delhi. Within minutes it sends each subscribed princip
 Hindi or English. The message says which school hour has the cleanest air, whether to hold assembly indoors,
 or that there is no safe window today.
 
-This is a working demo. One real Delhi school is set up as a recipient, and its alerts go to the builder's
+This is a working demo. Five real Delhi schools are set up as recipients, and their alerts go to the builder's
 own phone; no school has signed up yet. The dashboard shows each morning's run, updated at 5:30, and a replay
 of 13 Nov 2025, a smoggy winter day.
 
-**Dashboard:** https://rshczjirhol3xg3tzbuwhv4txi0ooeac.lambda-url.ap-south-1.on.aws/
+**Dashboard:** https://rshczjirhol3xg3tzbuwhv4txi0ooeac.lambda-url.ap-south-1.on.aws/ · **Video:** [FILL: YouTube link]
+· **Blog:** [FILL: Builder Center link]
 
 Built solo for Environmental Hacks (Bharat Builds Tour, WeMakeDevs × AWS), Air track.
 
@@ -32,6 +73,8 @@ in between: on any school morning, it tells each principal which hour is cleanes
 
 The same alert goes out in Hindi for schools that choose it. When the principal replies **1**, the school is
 marked as acted on, and the dashboard shows it within about 20 seconds.
+
+[FILL: phone screenshot of a real alert and the reply, once recorded]
 
 ## Does it work?
 
@@ -69,7 +112,7 @@ What the numbers say, honestly:
   hours. The dashboard says when this happens.
 
 Every decision behind these numbers, including the ones that went against us, is in
-[DECISIONS.md](docs/DECISIONS.md).
+[DECISIONS.md](DECISIONS.md).
 
 ## How it runs on AWS
 
@@ -139,7 +182,7 @@ a health outcome.
 
 ## Limits
 
-- **Demo school only.** One real Delhi school is set up as a demo recipient, and its alerts go to the
+- **Demo schools only.** Five real Delhi schools are set up as demo recipients, and their alerts go to the
   builder's own phone. No school has signed up.
 - **Partial school list.** OpenStreetMap has 1,110 of Delhi's schools. The government's UDISE+ register would
   cover them all.
@@ -154,45 +197,27 @@ named `clearhour`.
 
 ```bash
 uv sync
-uv run pytest -q          # 31 tests, including the whole pipeline on mocked AWS
+uv run pytest -q          # 30 tests, including the whole pipeline on mocked AWS
 cp .env.example .env      # add OPENAQ_API_KEY; with WA_MODE=dry_run, alerts are logged, not sent
 bash scripts/deploy.sh    # builds, deploys, uploads the model and the page, prints the dashboard URL
 ```
 
 To rebuild the data and the models from scratch:
 
-```bash
-uv run --env-file .env scripts/find_stations.py     # data/stations.csv: Delhi NCR PM2.5 monitors (OpenAQ API)
-uv run --env-file .env scripts/check_timestamps.py  # prints the archive's timestamp convention; it is set in scripts/config.py
-uv run scripts/pull_archive.py                      # data/processed/pm25_hourly.parquet and outputs/coverage.csv
-uv run scripts/hook_stat.py                         # outputs/hook_stat.json, hook_chart.png and hour_profile_2025.csv
-uv run scripts/fetch_meteo.py                       # data/processed/meteo.parquet: weather and CAMS (Open-Meteo)
-uv run scripts/backtest.py                          # outputs/backtest.json and outputs/backtest_by_lead.csv
-uv run scripts/train_final.py                       # models/: the fresh and stale models and their feature lists
-uv run scripts/schools.py                           # data/schools.csv (OpenStreetMap) and data/pilot_schools.csv
-uv run scripts/build_reference.py                   # src/clearhour/stations.json and schools_index.json, for the Lambdas
-uv run --env-file .env scripts/seed_pilots.py       # the demo schools' profiles in DynamoDB (after the first deploy)
-```
+[FILL: the scripts in order, one line each, with what each writes]
 
 ## Repo map
 
-- `src/clearhour/`: the library, the Lambda handlers (`handlers/`) and the reference files the Lambdas carry
-- `functions/forecast/`: the Forecast Lambda's container image
-- `statemachine/`: the Step Functions definition of the daily run
-- `site/`: the dashboard, one static page
-- `scripts/`: data pulls, the backtest, training, deploy and publish
-- `tests/`: pytest, including the whole pipeline on mocked AWS
-- `data/`: the monitor, school and pilot lists (raw and processed data stay out of git)
-- `models/`: the models' feature lists (the model files are built, not committed)
-- `outputs/`: the charts, backtest results, coverage table and dashboard screenshots
-- `docs/`: the build briefs (`docs/briefs/`) and every decision (`docs/DECISIONS.md`)
+[FILL: the top-level folders, one line each]
 
 ## Built with AI tools
 
 - **Claude** (claude.ai) for the architecture, the analysis plan and the build briefs, all in
   [docs/briefs/](docs/briefs/).
 - **Claude Code** for the implementation, tests, data pulls and deploys.
+- [FILL: keep this line only if it was used] **Impeccable** for a design review of the dashboard.
 
 ## License
 
 MIT. See [LICENSE](LICENSE).
+````
