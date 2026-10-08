@@ -24,3 +24,4 @@ aws s3 cp models/clearhour-lgbm.txt "s3://${bucket}/models/clearhour-lgbm.txt" -
 aws s3 cp models/features.json "s3://${bucket}/models/features.json" --profile clearhour
 aws s3 cp data/processed/pm25_hourly.parquet "s3://${bucket}/archive/pm25_hourly.parquet" --profile clearhour
 echo "deployed; model and archive uploaded to s3://${bucket}/"
+scripts/publish_site.sh
