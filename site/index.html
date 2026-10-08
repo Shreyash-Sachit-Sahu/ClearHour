@@ -75,14 +75,16 @@ button, input { font: inherit; color: inherit; }
 }
 .is-replay .replay-note { display: block; }
 .dateline { color: var(--ink-2); font-size: 14px; margin: 0 0 4px; }
+.stale-note { color: var(--ink-2); font-size: 14px; margin: 0 0 8px; padding-left: 10px; border-left: 3px solid var(--hairline); }
 .headline { font-size: 25px; line-height: 1.22; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 18px; }
-.headline .slot { color: var(--clear); white-space: nowrap; }
+.headline .slot { white-space: nowrap; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
 .strip-title { font-size: 13px; color: var(--ink-2); margin: 0 0 6px; }
 .strip { width: 100%; height: auto; display: block; overflow: visible; }
 .strip text { font-family: var(--font); }
 .strip .v { font-size: 12px; fill: var(--ink-2); }
-.strip .v.on { fill: var(--clear); font-weight: 700; }
+.strip .v.on { fill: var(--ink); font-weight: 700; }
+.strip .t.on { fill: var(--ink); font-weight: 600; }
 .strip .t { font-size: 12px; fill: var(--muted); }
 .strip .ref { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
 .strip .reflabel { font-size: 11px; fill: var(--muted); }
@@ -198,6 +200,7 @@ button, input { font: inherit; color: inherit; }
     <aside class="brief">
       <p class="replay-note" id="replay-note"></p>
       <p class="dateline" id="dateline"></p>
+      <p class="stale-note" id="stale-note" hidden></p>
       <h1 class="headline" id="headline"></h1>
       <p class="strip-title" id="city-strip-title"></p>
       <svg class="strip" id="city-strip" role="img"></svg>
@@ -236,6 +239,8 @@ const T = {
     place: "Delhi schools", today: "Today", replay: (d) => `Replay ${d}`,
     replayNote: (d) => `Replay of ${d}, run on that morning's data. This is not today's air.`,
     forecastFor: (d, t) => `Forecast for ${d}, made at ${t}`,
+    readingsUpTo: (w) => `. Monitor readings available up to ${w}`,
+    staleNote: (slot) => `The night's readings haven't arrived yet, so each school's Clear Hour is ${slot}, the school hour that's cleanest most often.`,
     none: "No forecast yet. The first run is at 5:30 AM IST.",
     allFine: (n) => `Air is fine at all ${n} schools today.`,
     fine: (k, n) => `Air is fine at ${k} of ${n} schools today.`,
@@ -268,6 +273,8 @@ const T = {
     place: "दिल्ली के स्कूल", today: "आज", replay: (d) => `रीप्ले ${d}`,
     replayNote: (d) => `${d} की सुबह का रीप्ले, उसी सुबह के डेटा से। यह आज की हवा नहीं है।`,
     forecastFor: (d, t) => `${d} का पूर्वानुमान, ${t} पर बना`,
+    readingsUpTo: (w) => `। मॉनिटर रीडिंग ${w} तक उपलब्ध`,
+    staleNote: (slot) => `रात की रीडिंग अभी नहीं आईं, इसलिए हर स्कूल का साफ़ समय ${slot} है, जो अक्सर सबसे साफ़ घंटा होता है।`,
     none: "अभी कोई पूर्वानुमान नहीं है। पहला रन सुबह 5:30 बजे होगा।",
     allFine: (n) => `आज सभी ${n} स्कूलों में हवा ठीक है।`,
     fine: (k, n) => `आज ${n} में से ${k} स्कूलों में हवा ठीक है।`,
@@ -359,11 +366,11 @@ function drawStrip(svg, values, clearHour) {
   HOURS.forEach((h, i) => {
     const v = values[i], x = x0 + i * bw + gap / 2, w = bw - gap, on = h === clearHour;
     const yy = v == null ? y(0) : y(v), r = Math.min(4, w / 2);
-    if (v != null) out += `<path d="M${x},${y(0)} V${yy + r} Q${x},${yy} ${x + r},${yy} H${x + w - r} Q${x + w},${yy} ${x + w},${yy + r} V${y(0)} Z" fill="${on ? "var(--clear)" : "var(--bar)"}"><title>${slotLabel(h, state.lang)}: ${Math.round(v)} µg/m³</title></path>`;
+    if (v != null) out += `<path d="M${x},${y(0)} V${yy + r} Q${x},${yy} ${x + r},${yy} H${x + w - r} Q${x + w},${yy} ${x + w},${yy + r} V${y(0)} Z" fill="${on ? "var(--ink)" : "var(--bar)"}"><title>${slotLabel(h, state.lang)}: ${Math.round(v)} µg/m³</title></path>`;
     out += `<text class="v${on ? " on" : ""}" x="${x + w / 2}" y="${yy - 5}" text-anchor="middle">${v == null ? "–" : Math.round(v)}</text>`;
     const [hh, ap] = clock(h);
     const lab = i === 0 || i === HOURS.length - 1 ? `${hh} ${state.lang === "hi" ? (h < 12 ? "सुबह" : "दोपहर") : ap}` : `${hh}`;
-    out += `<text class="t" x="${x + w / 2}" y="${H - 6}" text-anchor="middle">${lab}</text>`;
+    out += `<text class="t${on ? " on" : ""}" x="${x + w / 2}" y="${H - 6}" text-anchor="middle">${lab}</text>`;
   });
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.innerHTML = out;
@@ -382,12 +389,21 @@ function renderBrief() {
   $("key-monitor").textContent = L.keyMonitor;
   $("key-demo").textContent = L.keyDemo;
   if (!d) {
-    $("dateline").textContent = ""; $("headline").textContent = L.none;
+    $("dateline").textContent = ""; $("stale-note").hidden = true; $("headline").textContent = L.none;
     $("city-strip").innerHTML = ""; $("city-strip-title").textContent = ""; $("legend").innerHTML = ""; $("pilots").innerHTML = "";
     return;
   }
   $("replay-note").textContent = L.replayNote(longDay(d.day, state.lang));
-  $("dateline").textContent = L.forecastFor(longDay(d.day, state.lang), timeIST(d.generated_at));
+  let dateline = L.forecastFor(longDay(d.day, state.lang), timeIST(d.generated_at));
+  if (d.obs_through && new Date(d.obs_through) < new Date(`${d.day}T04:00:00+05:30`)) {
+    const through = new Date(d.obs_through);
+    const iso = new Date(through.getTime() + 5.5 * 3600e3).toISOString().slice(0, 10);
+    dateline += L.readingsUpTo(`${dayLabel(iso, state.lang)}, ${timeIST(d.obs_through)}`);
+  }
+  $("dateline").textContent = dateline;
+  const staleNote = $("stale-note");
+  staleNote.hidden = d.stale_hour == null;
+  staleNote.textContent = d.stale_hour == null ? "" : L.staleNote(slotLabel(d.stale_hour, state.lang));
   const n = d.schools.length;
   const counts = [0, 0, 0, 0, 0];
   const clearCounts = {};
@@ -469,6 +485,7 @@ function renderCard() {
     <div class="bubble">${esc(L.msg(params))}${meta ? `<span class="meta">${esc(meta)}</span>` : ""}</div>
     <p class="label">${esc(L.stripSchool)}</p>
     <svg class="strip" id="school-strip" role="img" aria-label="${esc(L.stripSchool)}"></svg>
+    ${d.stale_hour != null && s.kind === "clear_hour" ? `<p class="latest">${esc(L.staleNote(slotLabel(d.stale_hour, state.lang)))}</p>` : ""}
     ${s.latest != null ? `<p class="latest">${L.latest(Math.round(s.latest))}</p>` : ""}
     ${a ? `<p class="demo">${esc(L.demo)}</p>` : ""}`;
   drawStrip($("school-strip"), s.hourly, s.clear);
