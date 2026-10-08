@@ -70,6 +70,7 @@ def publish_day(fc: dict, decisions: dict, schools: list[dict]) -> str:
         "source": fc["source"],
         "generated_at": fc["generated_at"],
         "median_lead_h": fc.get("median_lead_h"),
+        "obs_through": fc.get("obs_through"),
         "hours": TARGET_HOURS,
         "stations": [
             [s["location_id"], s["name"], s["lat"], s["lon"], latest.get(str(s["location_id"]))] for s in stations()

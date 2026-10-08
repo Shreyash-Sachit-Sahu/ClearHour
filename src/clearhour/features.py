@@ -8,10 +8,15 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from clearhour.constants import IST, TARGET_HOURS
+from clearhour.constants import ASSEMBLY_HOUR, IST, TARGET_HOURS
 
-LATEST_OBS_HOUR = 4  # newest bin assumed published by 05:30 IST (the 04:00-05:00 hour); tune from live ingest
-MAX_STALENESS_H = 6  # if that bin is missing, fall back at most this many hours
+LATEST_OBS_HOUR = 4  # the 04:00-05:00 IST bin: the newest one that could exist at 05:30
+MAX_STALENESS_H = 6  # a station may lag the cutoff by at most this many hours
+# OpenAQ publishes Delhi's readings in late batches, so at 05:30 the newest reading can be a day old. The model
+# trains on these blackouts (hours of missing readings before 04:00) and serves whichever one the data shows.
+BLACKOUTS_H = (0, 6, 12, 18, 24, 30, 36)
+MAX_BLACKOUT_H = BLACKOUTS_H[-1]
+FRESH_LEAD_H = ASSEMBLY_HOUR - LATEST_OBS_HOUR + MAX_STALENESS_H  # 08:00 leads up to this: a reading from the night
 MET_COLUMNS = ["pm2_5", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "boundary_layer_height"]
 
 FEATURES = [
@@ -46,12 +51,23 @@ def _require_on_the_hour(ts: pd.DatetimeIndex, name: str) -> None:
         raise ValueError(f"{name}: {len(off)} timestamps are not on the hour, e.g. {off[0]}")
 
 
-def build_rows(hourly: pd.DataFrame, met: pd.DataFrame, days) -> pd.DataFrame:
+def blackout_for(hourly: pd.DataFrame, day) -> int:
+    """Hours between the 04:00 IST bin and the newest reading at or before it (0 when that bin is in)."""
+    cutoff = pd.Timestamp(day).tz_convert(IST).normalize() + pd.Timedelta(hours=LATEST_OBS_HOUR)
+    seen = hourly.loc[hourly["hour_ist"] <= cutoff, "hour_ist"]
+    if seen.empty:
+        return MAX_BLACKOUT_H + 1
+    return int((cutoff - seen.max()) / pd.Timedelta(hours=1))
+
+
+def build_rows(hourly: pd.DataFrame, met: pd.DataFrame, days, blackout_h: int = 0) -> pd.DataFrame:
     """Feature rows for each station x day x school hour.
 
     hourly: columns location_id, hour_ist (tz-aware, IST, hour-beginning), pm25.
     met: city-point hourly weather and CAMS indexed by tz-aware hour, with MET_COLUMNS.
     days: IST midnights (tz-aware) to build rows for. `target` is NaN where no reading exists.
+    blackout_h: readings from the last this-many hours before 04:00 count as not yet published, for the
+    latest-reading and yesterday features alike. Targets are never affected.
     """
     if hourly.empty:
         return pd.DataFrame(columns=["day", "target", *FEATURES])
@@ -71,16 +87,18 @@ def build_rows(hourly: pd.DataFrame, met: pd.DataFrame, days) -> pd.DataFrame:
     for day in days:
         d0 = pd.Timestamp(day).tz_convert(IST).normalize()
         i_latest = pos.get(d0 + pd.Timedelta(hours=LATEST_OBS_HOUR))
-        if i_latest is None:
+        if i_latest is None or i_latest - blackout_h < 0:
             continue
+        i_cut = i_latest - blackout_h  # the newest hour treated as published
         last_idx = np.full(len(stations), -1)
         for k in range(MAX_STALENESS_H + 1):
-            i = i_latest - k
+            i = i_cut - k
             if i < 0:
                 break
             hit = (last_idx < 0) & np.isfinite(vals[i])
             last_idx[hit] = i
         y_idx = [pos.get(d0 - pd.Timedelta(days=1) + pd.Timedelta(hours=t)) for t in TARGET_HOURS]
+        y_idx = [i if i is not None and i <= i_cut else None for i in y_idx]
         t_idx = [pos.get(d0 + pd.Timedelta(hours=t)) for t in TARGET_HOURS]
         for j, station in enumerate(stations):
             li = int(last_idx[j])

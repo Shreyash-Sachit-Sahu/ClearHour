@@ -71,21 +71,28 @@ def handler(event, context):
         raise RuntimeError("model was trained on a different feature list; retrain")
     hourly = live_obs(day) if source == "live" else archive_obs(day)
     met = meteo.fetch((day - pd.Timedelta(days=1)).date().isoformat(), day.date().isoformat(), live=source == "live")
-    rows = features.build_rows(hourly, met, [day])
+    blackout = features.blackout_for(hourly, day)
+    trained_up_to = max(meta.get("blackouts_h", [0]))
+    if blackout > trained_up_to:
+        raise RuntimeError(f"the newest reading is {blackout} h before 04:00 IST; the model covers {trained_up_to} h")
+    rows = features.build_rows(hourly, met, [day], blackout_h=blackout)
     if rows.empty:
-        raise RuntimeError(f"no station had a reading within {features.MAX_STALENESS_H} h of the 04:00 IST bin")
+        raise RuntimeError(f"no station had a reading within {features.MAX_STALENESS_H} h of the newest one")
     rows["location_id"] = pd.Categorical(rows["location_id"], categories=meta["stations"])
     rows["pred"] = np.expm1(booster.predict(rows[features.FEATURES]))
     preds: dict[str, dict[str, float]] = {}
-    latest: dict[str, float] = {}  # each station's newest reading at or before 04:00 IST (v_last)
+    latest: dict[str, float] = {}  # stations with a reading from the night; the assembly call uses only these
     for r in rows.itertuples():
         preds.setdefault(str(r.location_id), {})[str(r.target_hour)] = round(float(r.pred), 1)
-        latest[str(r.location_id)] = round(float(r.v_last), 1)
+        if r.target_hour == 8 and r.lead_h <= features.FRESH_LEAD_H:
+            latest[str(r.location_id)] = round(float(r.v_last), 1)
     body = {
         "day": str(day.date()),
         "source": source,
         "generated_at": pd.Timestamp.now(tz=IST).isoformat(timespec="seconds"),
         "median_lead_h": float(rows["lead_h"].median()),
+        "blackout_h": blackout,
+        "obs_through": (day + pd.Timedelta(hours=features.LATEST_OBS_HOUR - blackout)).isoformat(),
         "stations": preds,
         "latest": latest,
     }
@@ -95,7 +102,13 @@ def handler(event, context):
     )
     print(
         json.dumps(
-            {"day": body["day"], "source": source, "stations": len(preds), "median_lead_h": body["median_lead_h"]}
+            {
+                "day": body["day"],
+                "source": source,
+                "stations": len(preds),
+                "blackout_h": blackout,
+                "median_lead_h": body["median_lead_h"],
+            }
         )
     )
     return {

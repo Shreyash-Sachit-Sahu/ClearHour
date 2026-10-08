@@ -3,7 +3,7 @@ import pytest
 from synthetic import make_synthetic
 
 from clearhour import meteo
-from clearhour.features import FEATURES, MET_COLUMNS, build_rows
+from clearhour.features import FEATURES, MET_COLUMNS, blackout_for, build_rows
 from clearhour.model import evaluate, walk_forward, with_station_category
 
 IST = "Asia/Kolkata"
@@ -62,3 +62,18 @@ def test_walk_forward_beats_persistence_and_reports_decisions():
     assert res["station_days"] > 100
     assert 0 <= res["hit_rate_top2"]["model"] <= 1
     assert res["realised_cut_vs_assembly"]["median"] > 0
+
+
+def test_blackout_hides_late_readings_from_features_but_not_targets():
+    hourly, met = make_synthetic(n_stations=2, end="2025-11-01")
+    day = pd.Timestamp("2025-10-20", tz=IST)
+    fresh = build_rows(hourly, met, [day])
+    stale = build_rows(hourly, met, [day], blackout_h=24)
+    assert not stale.empty and (stale["lead_h"] >= 4 + 24).all()
+    assert stale["v_yday_t"].isna().all()  # yesterday's school hours all fall after 04:00 the day before
+    key = ["location_id", "target_hour"]
+    both = fresh.merge(stale, on=key, suffixes=("_f", "_s"))
+    assert (both["target_f"].fillna(-1) == both["target_s"].fillna(-1)).all()
+    upto = hourly[hourly["hour_ist"] <= pd.Timestamp("2025-10-19 11:00", tz=IST)]
+    assert blackout_for(upto, day) == 17
+    assert blackout_for(hourly, day) == 0
