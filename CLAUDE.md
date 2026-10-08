@@ -43,21 +43,23 @@ safe hour it says so. A dashboard shows which schools are at risk and which have
 - Lambda packaging: zip functions use CodeUri `src/` and may import only the standard library, boto3 and the
   dependency-free modules (`constants`, `decide`, `store`, `whatsapp`). Anything that needs pandas or LightGBM
   runs in the Forecast container image.
-- Dashboard (Saturday): static site, Vite + MapLibre, Node 24, on Amplify Hosting.
+- Dashboard: `site/index.html` is the dashboard, one static page (MapLibre, no build step) that the Web function's
+  URL serves with its data files. `scripts/publish_site.sh` uploads it; re-run it after any edit to the page.
+  The data files under `site/data/` never hold phone numbers.
 
 ## Repo layout
 
 ```
 CLAUDE.md
 template.yaml            SAM template (all AWS resources)
-samconfig.toml           written by `sam deploy --guided`
+samconfig.toml           written by hand; never holds parameter values
 src/clearhour/           library code shared by scripts and Lambdas
 functions/<name>/        one folder per Lambda handler
 scripts/                 data jobs, run as `uv run --env-file .env scripts/<name>.py`
 tests/                   pytest, fast (under 10 s)
 data/                    raw/ and processed/ are gitignored; small reference CSVs are committed
 outputs/                 charts, JSON and CSV for the README and video (committed)
-web/                     dashboard (Saturday)
+site/index.html          the dashboard; scripts/publish_site.sh uploads it
 docs/briefs/             phase briefs (input)
 docs/DECISIONS.md        one line per shortcut or deviation
 ```

@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
-from clearhour import store, whatsapp
+from clearhour import site, store, whatsapp
 
 IST = ZoneInfo("Asia/Kolkata")
 YES = {"1", "1.", "१", "done", "ok 1", "हो गया"}
@@ -44,6 +44,8 @@ def handler(event, context):
             today = datetime.now(IST).date().isoformat()
             acted = store.mark_acted(school_id, today, datetime.now(UTC).isoformat(timespec="seconds"))
             body = text["thanks"].format(name=profile["name"]) if acted else text["no_alert"]
+            if acted:
+                site.publish_alerts_quietly()
         else:
             body = text["help"]
         whatsapp.send(whatsapp.text_payload(msg["from"], body))

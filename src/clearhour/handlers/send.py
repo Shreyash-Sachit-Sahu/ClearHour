@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 from datetime import UTC, datetime
 
-from clearhour import store, whatsapp
+from clearhour import site, store, whatsapp
 
 
 def handler(event, context):
@@ -40,4 +40,5 @@ def handler(event, context):
         message_id=message_id,
         sent_at=datetime.now(UTC).isoformat(timespec="seconds"),
     )
+    site.publish_alerts_quietly()
     return {"school_id": school_id, "status": "sent", "message_id": message_id}

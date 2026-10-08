@@ -134,6 +134,20 @@ Resources:
         - S3CrudPolicy:
             BucketName: !Ref DataBucket
 
+  WebFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: clearhour.handlers.web.handler
+      Runtime: python3.13
+      MemorySize: 256
+      Timeout: 10
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref DataBucket
+      FunctionUrlConfig:
+        AuthType: NONE
+
   SendFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -153,6 +167,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ClearHourTable
+        - S3WritePolicy:
+            BucketName: !Ref DataBucket
         - Statement:
             - Effect: Allow
               Action: social-messaging:SendWhatsAppMessage
@@ -177,6 +193,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ClearHourTable
+        - S3WritePolicy:
+            BucketName: !Ref DataBucket
         - Statement:
             - Effect: Allow
               Action: social-messaging:SendWhatsAppMessage
@@ -226,6 +244,8 @@ Resources:
             Input: '{"source": "live"}'
 
 Outputs:
+  SiteUrl:
+    Value: !GetAtt WebFunctionUrl.FunctionUrl
   TableName:
     Value: !Ref ClearHourTable
   DataBucketName:

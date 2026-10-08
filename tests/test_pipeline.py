@@ -10,7 +10,7 @@ import pytest
 from moto import mock_aws
 from synthetic import make_synthetic
 
-from clearhour import features, store
+from clearhour import features, site, store
 from clearhour.model import fit, with_station_category
 
 IST = ZoneInfo("Asia/Kolkata")
@@ -47,6 +47,8 @@ def aws(monkeypatch):
         )
         boto3.client("s3").create_bucket(Bucket=BUCKET, CreateBucketConfiguration={"LocationConstraint": "ap-south-1"})
         monkeypatch.setattr(store, "_TABLE", None)
+        monkeypatch.setattr(site, "_S3", None)
+        monkeypatch.setattr(site, "stations", lambda: STATIONS)
         yield
 
 
@@ -97,12 +99,16 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     assert res["schools"] == 1  # the far school has no station forecast
     decisions = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key=res["decisions_key"])["Body"].read())
     assert decisions["node/1"]["latest"] is not None
+    live = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key="site/data/live.json")["Body"].read())
+    assert [row[0] for row in live["schools"]] == ["node/1"] and len(live["stations"]) == 3
     assert res["alerts"] == [{"school_id": "node/1", "day": "2025-11-13"}]
     alert = store.get_alert("node/1", "2025-11-13")
     assert alert["status"] == "pending" and alert["params"][1] == "गुरु 13 नवंबर"
 
     sent = send.handler(res["alerts"][0], None)
     assert sent == {"school_id": "node/1", "status": "sent", "message_id": "dry-run"}
+    alerts = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key="site/data/alerts.json")["Body"].read())
+    assert alerts["days"]["2025-11-13"][0]["status"] == "sent"
     assert send.handler(res["alerts"][0], None)["status"] == "skipped"  # never twice
     assert decide.handler(out, None)["alerts"] == []  # a re-run doesn't queue it again
 
@@ -116,3 +122,5 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     event = {"Records": [{"Sns": {"Message": json.dumps({"whatsAppWebhookEntry": json.dumps(entry)})}}]}
     assert inbound.handler(event, None) == {"handled": 1}
     assert store.get_alert("node/1", today)["acted"] is True
+    alerts = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key="site/data/alerts.json")["Body"].read())
+    assert alerts["days"][today][0]["acted"] is True

@@ -14,7 +14,7 @@ from importlib import resources
 import boto3
 
 from clearhour import decide as rules
-from clearhour import store
+from clearhour import site, store
 from clearhour.constants import TARGET_HOURS
 
 _s3 = boto3.client("s3")
@@ -54,7 +54,8 @@ def handler(event, context):
     day, replay = date.fromisoformat(fc["day"]), fc["source"] != "live"
 
     decisions = {}
-    for sch in schools():
+    all_schools = schools()
+    for sch in all_schools:
         hourly = school_hourly(sch, fc["stations"])
         if hourly:
             now = school_latest(sch, fc.get("latest", {}))
@@ -88,5 +89,10 @@ def handler(event, context):
         existing = None if created else store.get_alert(school_id, alert_day)
         if created or (existing and existing.get("status") == "pending"):
             alerts.append({"school_id": school_id, "day": alert_day})
+    try:  # the dashboard files; a failure here must not stop the alerts
+        site.publish_day(fc, decisions, all_schools)
+        site.publish_alerts()
+    except Exception as e:  # logged, never raised
+        print(json.dumps({"warning": "dashboard files not updated", "error": str(e)[:300]}))
     print(json.dumps({"day": fc["day"], "schools": len(decisions), "alerts": len(alerts)}))
     return {"day": fc["day"], "decisions_key": decisions_key, "schools": len(decisions), "alerts": alerts}
