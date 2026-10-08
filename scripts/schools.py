@@ -22,6 +22,14 @@ SCHOOL_WORDS = set(
     + ["coeducational", "educational"]  # long forms of co/ed/coed ("Govt Coeducational Senior Secondary School")
 )
 OUTSIDE_DELHI = r"Noida|Gurugram|Gurgaon|Ghaziabad|Faridabad|Bahadurgarh"  # by name: an IMD station sits in Gurugram
+# How the alert names each pilot (the PROFILE name); the OSM name stays in the name column.
+DISPLAY_NAMES = {
+    "way/295816372": "Kendriya Vidyalaya, RK Puram Sector 2",
+    "way/78786253": "Rani Chenamma Sarvodaya Kanya Vidyalaya",
+    "node/11696928200": "Kendriya Vidyalaya Shahdara",
+    "way/1291730896": "Sarvodaya Kanya Vidyalaya, Noor Nagar",
+    "node/2446010483": "Swami Dayanand Govt. Sarvodaya Vidyalaya",
+}
 
 
 def is_named(name: str) -> bool:
@@ -83,6 +91,7 @@ def main() -> None:
     stations = pd.read_csv("data/stations.csv")
     stations = stations[stations["location_id"].isin(model_stations())]
     pilots = pick_pilots(schools, stations)
+    pilots = pilots.assign(display_name=pilots["osm_id"].map(DISPLAY_NAMES).fillna(pilots["name"]))
     pilots.to_csv(PILOTS, index=False)
     near = int((pairwise_km(schools, stations).min(axis=1) <= MAX_KM).sum())
     print(f"{len(schools):,} schools, {near:,} within {MAX_KM:.0f} km of one of {len(stations)} model stations")
