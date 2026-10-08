@@ -20,8 +20,9 @@ sam deploy --no-fail-on-empty-changeset --parameter-overrides "${overrides[@]}" 
 
 bucket=$(aws cloudformation describe-stacks --stack-name clearhour --profile clearhour \
   --query "Stacks[0].Outputs[?OutputKey=='DataBucketName'].OutputValue" --output text)
-aws s3 cp models/clearhour-lgbm.txt "s3://${bucket}/models/clearhour-lgbm.txt" --profile clearhour
-aws s3 cp models/features.json "s3://${bucket}/models/features.json" --profile clearhour
+for f in clearhour-lgbm.txt features.json clearhour-lgbm-stale.txt features-stale.json; do  # fresh and stale models
+  aws s3 cp "models/$f" "s3://${bucket}/models/$f" --profile clearhour
+done
 aws s3 cp data/processed/pm25_hourly.parquet "s3://${bucket}/archive/pm25_hourly.parquet" --profile clearhour
-echo "deployed; model and archive uploaded to s3://${bucket}/"
+echo "deployed; models and archive uploaded to s3://${bucket}/"
 scripts/publish_site.sh
