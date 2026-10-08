@@ -1,6 +1,7 @@
 import json
 from datetime import date
 
+from clearhour import openaq_api
 from clearhour.decide import decide, message_params, slot_label
 from clearhour.handlers.ingest import hourly_means, lookback_hours
 from clearhour.whatsapp import parse_sns, send, template_payload
@@ -109,3 +110,16 @@ def test_ingest_lookback_defaults_to_three_hours_and_caps_backfills(monkeypatch)
     assert lookback_hours({}) == 3 and lookback_hours(None) == 3
     assert lookback_hours({"lookback_hours": 48}) == 48
     assert lookback_hours({"lookback_hours": 500}) == 72
+
+
+def test_monitor_list_takes_the_pm25_sensor_that_reported_last(monkeypatch):
+    # R K Puram lists a sensor retired in 2018 first; the live ingest must ask the one still reporting
+    last = {35: "2018-02-21T21:15:00Z", 12234787: "2026-10-07T14:30:00Z"}
+
+    def fake_get(path, params):
+        return {"results": [{"datetimeLast": {"utc": last[int(path.rsplit("/", 1)[1])]}}]}
+
+    monkeypatch.setattr(openaq_api, "get", fake_get)
+    monkeypatch.setattr(openaq_api.time, "sleep", lambda s: None)  # skip the rate-limit pause
+    assert openaq_api.newest_sensor([35, 12234787]) == 12234787
+    assert openaq_api.newest_sensor([7]) == 7  # a single sensor needs no lookup

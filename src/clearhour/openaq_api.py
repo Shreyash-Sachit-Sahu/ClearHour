@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 
 import requests
 
@@ -20,6 +21,17 @@ def get(path: str, params: dict) -> dict:
     )
     r.raise_for_status()
     return r.json()
+
+
+def newest_sensor(ids: list[int]) -> int:
+    """The sensor that reported last. A location can keep a retired PM2.5 sensor, and the list order isn't fixed."""
+    if len(ids) == 1:
+        return ids[0]
+    last = {}
+    for i in ids:
+        time.sleep(1.1)  # OpenAQ allows 60 requests a minute
+        last[i] = (get(f"/sensors/{i}", {})["results"][0].get("datetimeLast") or {}).get("utc") or ""
+    return max(ids, key=lambda i: last[i])
 
 
 def delhi_pm25_monitors() -> list[dict]:
@@ -43,7 +55,7 @@ def delhi_pm25_monitors() -> list[dict]:
                     "lon": loc["coordinates"]["longitude"],
                     "provider": (loc.get("provider") or {}).get("name"),
                     "owner": (loc.get("owner") or {}).get("name"),
-                    "pm25_sensor_id": pm25[0]["id"],
+                    "pm25_sensor_id": newest_sensor([s["id"] for s in pm25]),
                     "first_utc": (loc.get("datetimeFirst") or {}).get("utc"),
                     "last_utc": (loc.get("datetimeLast") or {}).get("utc"),
                 }
