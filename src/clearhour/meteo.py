@@ -6,6 +6,8 @@ Station-to-station differences come from each station's own recent readings.
 
 from __future__ import annotations
 
+import time
+
 import pandas as pd
 import requests
 
@@ -14,11 +16,34 @@ WEATHER_ARCHIVE = "https://historical-forecast-api.open-meteo.com/v1/forecast"  
 WEATHER_LIVE = "https://api.open-meteo.com/v1/forecast"
 AIR_QUALITY = "https://air-quality-api.open-meteo.com/v1/air-quality"
 WEATHER_VARS = ["temperature_2m", "relative_humidity_2m", "wind_speed_10m", "boundary_layer_height"]
+RETRY_WAITS_S = (3, 10, 20)  # Open-Meteo has brief 503s; one must not cost the morning's alerts
+
+
+def _transient(e: requests.RequestException) -> bool:
+    if isinstance(e, requests.ConnectionError | requests.Timeout):
+        return True
+    status = e.response.status_code if e.response is not None else 0
+    return status == 429 or status >= 500
+
+
+def _get(url: str, params: dict) -> requests.Response:
+    """GET that retries connection errors, timeouts, 429 and 5xx a few times; anything else raises at once."""
+    for wait in RETRY_WAITS_S:
+        try:
+            r = requests.get(url, params=params, timeout=20)
+            r.raise_for_status()
+            return r
+        except requests.RequestException as e:
+            if not _transient(e):
+                raise
+            time.sleep(wait)
+    r = requests.get(url, params=params, timeout=20)
+    r.raise_for_status()
+    return r
 
 
 def _hourly(url: str, params: dict) -> pd.DataFrame:
-    r = requests.get(url, params=params, timeout=60)
-    r.raise_for_status()
+    r = _get(url, params)
     h = r.json()["hourly"]
     df = pd.DataFrame(h)
     df["time"] = pd.to_datetime(df["time"], utc=True)

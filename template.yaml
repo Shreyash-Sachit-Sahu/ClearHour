@@ -17,6 +17,12 @@ Parameters:
   WaTemplateName:
     Type: String
     Default: clearhour_daily_alert
+  WaSendAs:
+    Type: String
+    Default: template
+    AllowedValues: [template, text]
+    Description: text sends the same words as a plain message; WhatsApp allows it only within 24 h of the
+      recipient's last message, so use it while the template awaits approval
   WaTemplateLangEn:
     Type: String
     Default: en
@@ -110,7 +116,7 @@ Resources:
     Properties:
       PackageType: Image
       MemorySize: 2048
-      Timeout: 180
+      Timeout: 300
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref ClearHourTable
@@ -157,6 +163,7 @@ Resources:
       Environment:
         Variables:
           WA_MODE: !Ref WaMode
+          WA_SEND_AS: !Ref WaSendAs
           WA_PHONE_NUMBER_ID: !Ref WaPhoneNumberId
           WA_TEMPLATE_NAME: !Ref WaTemplateName
           WA_TEMPLATE_LANG_EN: !Ref WaTemplateLangEn

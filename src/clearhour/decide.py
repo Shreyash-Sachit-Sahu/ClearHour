@@ -43,6 +43,18 @@ TEXT = {
 }
 
 
+# The approved template bodies, word for word (Phase 1 brief, A4). render() fills them for a plain-text send.
+TEMPLATE_BODY = {
+    "en": "ClearHour air update for {0} on {1}: {2} Cleanest hour for outdoor activity: {3}. "
+    "Reply 1 once you have moved outdoor activities.",
+    "hi": "ClearHour वायु सूचना – {0}, {1}: {2} बाहरी गतिविधियों के लिए सबसे साफ़ समय: {3}। गतिविधियाँ बदलने के बाद 1 लिखकर भेजें।",
+}
+
+
+def render(params: list[str], lang: str = "en") -> str:
+    return TEMPLATE_BODY.get(lang, TEMPLATE_BODY["en"]).format(*params)
+
+
 def decide(hourly: dict[int, float], latest: float | None = None, fixed_hour: int | None = None) -> dict:
     """hourly: predicted PM2.5 per school hour (08..13). latest: the newest measured PM2.5 near the school (the
     04:00 IST bin, blended like the forecasts), or None. Returns the kind of day and the Clear Hour.

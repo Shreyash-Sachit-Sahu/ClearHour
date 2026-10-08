@@ -2,7 +2,7 @@ import json
 from datetime import date
 
 from clearhour import openaq_api
-from clearhour.decide import decide, message_params, slot_label
+from clearhour.decide import decide, message_params, render, slot_label
 from clearhour.handlers.ingest import hourly_means, lookback_hours
 from clearhour.whatsapp import parse_sns, send, template_payload
 
@@ -118,6 +118,18 @@ def test_ingest_lookback_defaults_to_three_hours_and_caps_backfills(monkeypatch)
     assert lookback_hours({}) == 3 and lookback_hours(None) == 3
     assert lookback_hours({"lookback_hours": 48}) == 48
     assert lookback_hours({"lookback_hours": 500}) == 72
+
+
+def test_render_fills_the_template_body_word_for_word():
+    d = {"kind": "clear_hour", "clear_hour": 13, "assembly_indoors": True}
+    en = render(message_params(d, "KV RK Puram", date(2025, 11, 13), "en"), "en")
+    assert en == (
+        "ClearHour air update for KV RK Puram on Thu 13 Nov: Hold assembly indoors. "
+        "Cleanest hour for outdoor activity: 1:00–2:00 PM. Reply 1 once you have moved outdoor activities."
+    )
+    hi = render(message_params(d, "केवी", date(2025, 11, 13), "hi"), "hi")
+    assert hi.startswith("ClearHour वायु सूचना – केवी, गुरु 13 नवंबर: प्रार्थना सभा अंदर करें।")
+    assert hi.endswith("गतिविधियाँ बदलने के बाद 1 लिखकर भेजें।")
 
 
 def test_monitor_list_takes_the_pm25_sensor_that_reported_last(monkeypatch):

@@ -348,7 +348,14 @@ function current() { return state.data[state.mode]; }
 function alertDay() { const d = current(); return d ? d.day + (state.mode === "replay" ? "-replay" : "") : null; }
 function alertsFor(id) { return (state.alerts.days[alertDay()] || []).find((a) => a.school_id === id); }
 function median(xs) { const v = xs.filter((x) => x != null).sort((a, b) => a - b); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; }
-function timeIST(iso) { if (!iso) return ""; return new Date(iso).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" }); }
+// Clock times in IST, written the way the alert writes them: "7:00 PM", or "शाम 7:00" in Hindi.
+function timeLabel(iso, lang) {
+  if (!iso) return "";
+  const d = new Date(new Date(iso).getTime() + 5.5 * 3600e3);
+  const h = d.getUTCHours(), m = String(d.getUTCMinutes()).padStart(2, "0"), h12 = (h % 12) || 12;
+  if (lang === "hi") return `${h < 4 ? "रात" : h < 12 ? "सुबह" : h < 16 ? "दोपहर" : h < 20 ? "शाम" : "रात"} ${h12}:${m}`;
+  return `${h12}:${m} ${h < 12 ? "AM" : "PM"}`;
+}
 
 // The school-day strip: six bars, the Clear Hour in blue, dashed lines at 120 and 250 µg/m³ labelled in a gutter.
 function drawStrip(svg, values, clearHour) {
@@ -394,11 +401,11 @@ function renderBrief() {
     return;
   }
   $("replay-note").textContent = L.replayNote(longDay(d.day, state.lang));
-  let dateline = L.forecastFor(longDay(d.day, state.lang), timeIST(d.generated_at));
+  let dateline = L.forecastFor(longDay(d.day, state.lang), timeLabel(d.generated_at, state.lang));
   if (d.obs_through && new Date(d.obs_through) < new Date(`${d.day}T04:00:00+05:30`)) {
     const through = new Date(d.obs_through);
     const iso = new Date(through.getTime() + 5.5 * 3600e3).toISOString().slice(0, 10);
-    dateline += L.readingsUpTo(`${dayLabel(iso, state.lang)}, ${timeIST(d.obs_through)}`);
+    dateline += L.readingsUpTo(`${dayLabel(iso, state.lang)}, ${timeLabel(d.obs_through, state.lang)}`);
   }
   $("dateline").textContent = dateline;
   const staleNote = $("stale-note");
@@ -476,7 +483,7 @@ function renderCard() {
   const stationNames = new Map((d.stations || []).map(([sid, sname]) => [sid, sname]));
   const near = s.near.map((sid) => stationNames.get(sid)).filter(Boolean);
   let meta = "";
-  if (a) meta = a.acted ? L.actedAt(timeIST(a.acted_at)) : a.sent_at ? `${L.sentAt(timeIST(a.sent_at))} · ${L.waiting}` : L.status[a.status] || "";
+  if (a) meta = a.acted ? L.actedAt(timeLabel(a.acted_at, state.lang)) : a.sent_at ? `${L.sentAt(timeLabel(a.sent_at, state.lang))} · ${L.waiting}` : L.status[a.status] || "";
   $("card-body").innerHTML = `
     <h2>${esc(name)}</h2>
     <p class="near">${near.length ? `${esc(L.near)}: ${near.map(esc).join(", ")}` : ""}</p>

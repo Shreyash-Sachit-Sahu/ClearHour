@@ -109,6 +109,7 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     alert = store.get_alert("node/1", "2025-11-13")
     assert alert["status"] == "pending" and alert["params"][1] == "गुरु 13 नवंबर"
 
+    monkeypatch.setenv("WA_SEND_AS", "text")  # the 24-hour-window fallback sends the same words as plain text
     sent = send.handler(res["alerts"][0], None)
     assert sent == {"school_id": "node/1", "status": "sent", "message_id": "dry-run"}
     alerts = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key="site/data/alerts.json")["Body"].read())

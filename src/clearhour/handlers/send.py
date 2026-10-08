@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 from datetime import UTC, datetime
 
+from clearhour import decide as rules
 from clearhour import site, store, whatsapp
 
 
@@ -21,12 +22,16 @@ def handler(event, context):
         return {"school_id": school_id, "status": "skipped", "reason": "claimed by another run"}
     profile = store.table().get_item(Key={"pk": f"SCHOOL#{school_id}", "sk": "PROFILE"})["Item"]
     lang = profile.get("lang", "en")
-    payload = whatsapp.template_payload(
-        profile["phone"],
-        list(alert["params"]),
-        name=os.environ.get("WA_TEMPLATE_NAME", "clearhour_daily_alert"),
-        lang=os.environ.get(f"WA_TEMPLATE_LANG_{lang.upper()}", lang),
-    )
+    params = list(alert["params"])
+    if os.environ.get("WA_SEND_AS") == "text":  # same words, plain message: only inside WhatsApp's 24-hour window
+        payload = whatsapp.text_payload(profile["phone"], rules.render(params, lang))
+    else:
+        payload = whatsapp.template_payload(
+            profile["phone"],
+            params,
+            name=os.environ.get("WA_TEMPLATE_NAME", "clearhour_daily_alert"),
+            lang=os.environ.get(f"WA_TEMPLATE_LANG_{lang.upper()}", lang),
+        )
     try:
         message_id = whatsapp.send(payload)
     except Exception as e:

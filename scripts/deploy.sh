@@ -10,7 +10,7 @@ mask() { sed -e "s/${OPENAQ_API_KEY:-unset-openaq}/[openaq-key]/g" -e "s/${META_
 overrides=("OpenAqApiKey=${OPENAQ_API_KEY}" "WaMode=${WA_MODE:-dry_run}")
 for pair in WaPhoneNumberId=WA_PHONE_NUMBER_ID WhatsAppEventsTopicArn=WA_EVENTS_TOPIC_ARN \
     WaTemplateLangEn=WA_TEMPLATE_LANG_EN WaTemplateLangHi=WA_TEMPLATE_LANG_HI \
-    MetaPhoneNumberId=META_PHONE_NUMBER_ID MetaAccessToken=META_ACCESS_TOKEN; do
+    MetaPhoneNumberId=META_PHONE_NUMBER_ID MetaAccessToken=META_ACCESS_TOKEN WaSendAs=WA_SEND_AS; do
   var="${pair#*=}"
   if [ -n "${!var:-}" ]; then overrides+=("${pair%%=*}=${!var}"); fi  # only parameters with a value
 done

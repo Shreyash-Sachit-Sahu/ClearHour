@@ -73,6 +73,14 @@
           "IntervalSeconds": 5,
           "MaxAttempts": 3,
           "BackoffRate": 2
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 60,
+          "MaxAttempts": 2,
+          "BackoffRate": 2
         }
       ],
       "Next": "Decide"

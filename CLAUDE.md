@@ -125,6 +125,8 @@ never double-sends.
 - Commit messages are imperative and scoped, e.g. `data: pull OpenAQ archive for Delhi monitors`.
 - Naming: the monitoring data is "Delhi NCR" (the stations include Gurugram, Noida, Ghaziabad and Bahadurgarh,
   all under the GRAP school orders) in the chart, README and video. The school layer stays "Delhi schools".
+- WhatsApp: `WA_SEND_AS=text` in `.env` is the fallback while the template is in review. It sends the template's
+  exact words as a plain message, which WhatsApp delivers only within 24 hours of the recipient's own last message.
 
 ## Commands
 
