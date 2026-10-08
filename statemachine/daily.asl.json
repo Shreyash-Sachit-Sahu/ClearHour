@@ -1,15 +1,75 @@
 {
-  "Comment": "ClearHour daily run: forecast every station, decide every school, send the subscribed schools' alerts",
-  "StartAt": "Forecast",
+  "Comment": "ClearHour daily run: fresh readings, forecast every station, decide every school, send the subscribed schools' alerts",
+  "StartAt": "Fresh",
   "States": {
+    "Fresh": {
+      "Type": "Choice",
+      "Comment": "Live runs pull the newest readings first; archive replays skip it",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.source",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.source",
+              "StringEquals": "archive"
+            }
+          ],
+          "Next": "Forecast"
+        }
+      ],
+      "Default": "Ingest"
+    },
+    "Ingest": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${IngestFunctionArn}",
+        "Payload": {}
+      },
+      "ResultPath": null,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.ingest_error",
+          "Next": "Forecast"
+        }
+      ],
+      "Next": "Forecast"
+    },
     "Forecast": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Parameters": { "FunctionName": "${ForecastFunctionArn}", "Payload.$": "$" },
+      "Parameters": {
+        "FunctionName": "${ForecastFunctionArn}",
+        "Payload.$": "$"
+      },
       "OutputPath": "$.Payload",
       "Retry": [
         {
-          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
           "IntervalSeconds": 5,
           "MaxAttempts": 3,
           "BackoffRate": 2
@@ -20,11 +80,19 @@
     "Decide": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Parameters": { "FunctionName": "${DecideFunctionArn}", "Payload.$": "$" },
+      "Parameters": {
+        "FunctionName": "${DecideFunctionArn}",
+        "Payload.$": "$"
+      },
       "OutputPath": "$.Payload",
       "Retry": [
         {
-          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
           "IntervalSeconds": 5,
           "MaxAttempts": 3,
           "BackoffRate": 2
@@ -37,19 +105,44 @@
       "ItemsPath": "$.alerts",
       "MaxConcurrency": 5,
       "ItemProcessor": {
-        "ProcessorConfig": { "Mode": "INLINE" },
+        "ProcessorConfig": {
+          "Mode": "INLINE"
+        },
         "StartAt": "Send",
         "States": {
           "Send": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
-            "Parameters": { "FunctionName": "${SendFunctionArn}", "Payload.$": "$" },
+            "Parameters": {
+              "FunctionName": "${SendFunctionArn}",
+              "Payload.$": "$"
+            },
             "OutputPath": "$.Payload",
-            "Retry": [{ "ErrorEquals": ["States.ALL"], "IntervalSeconds": 10, "MaxAttempts": 2, "BackoffRate": 2 }],
-            "Catch": [{ "ErrorEquals": ["States.ALL"], "ResultPath": "$.error", "Next": "SendFailed" }],
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "IntervalSeconds": 10,
+                "MaxAttempts": 2,
+                "BackoffRate": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.error",
+                "Next": "SendFailed"
+              }
+            ],
             "End": true
           },
-          "SendFailed": { "Type": "Pass", "End": true }
+          "SendFailed": {
+            "Type": "Pass",
+            "End": true
+          }
         }
       },
       "ResultPath": "$.sent",

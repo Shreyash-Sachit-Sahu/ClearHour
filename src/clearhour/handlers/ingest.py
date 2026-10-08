@@ -1,7 +1,8 @@
 """Ingest Lambda (hourly): latest PM2.5 for each monitor from the OpenAQ API into DynamoDB, one item per IST hour.
 
 Readings are binned by the IST clock hour their period starts in, so the API's explicit periods need no
-start/end convention. The 3-hour lookback rewrites recent hours as late readings arrive.
+start/end convention. The 3-hour lookback rewrites recent hours as late readings arrive. An event of
+{"lookback_hours": 48} backfills (capped at 72 h, which keeps every sensor inside one page of 1,000 readings).
 """
 
 from __future__ import annotations
@@ -47,9 +48,14 @@ def hourly_means(results: list[dict]) -> dict[str, tuple[float, int]]:
     return {k: (sum(v) / len(v), len(v)) for k, v in buckets.items()}
 
 
+def lookback_hours(event) -> int:
+    asked = event.get("lookback_hours") if isinstance(event, dict) else None
+    return max(1, min(int(asked or os.environ.get("LOOKBACK_HOURS", "3")), 72))
+
+
 def handler(event, context):
     now = datetime.now(UTC)
-    since = now - timedelta(hours=int(os.environ.get("LOOKBACK_HOURS", "3")))
+    since = now - timedelta(hours=lookback_hours(event))
     written, failed = 0, []
     for s in stations():
         try:

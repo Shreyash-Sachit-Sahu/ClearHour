@@ -2,8 +2,8 @@ import json
 from datetime import date
 
 from clearhour.decide import decide, message_params, slot_label
-from clearhour.handlers.ingest import hourly_means
-from clearhour.whatsapp import parse_sns, template_payload
+from clearhour.handlers.ingest import hourly_means, lookback_hours
+from clearhour.whatsapp import parse_sns, send, template_payload
 
 
 def _hours(*vals):
@@ -95,3 +95,17 @@ def test_ingest_bins_fifteen_minute_periods_by_ist_clock_hour():
     out = hourly_means(res)
     assert out["2025-11-13T02:30:00+00:00"] == (340 / 3, 3)
     assert out["2025-11-13T03:30:00+00:00"] == (50.0, 1)  # -999 (missing) dropped
+
+
+def test_dry_run_log_masks_the_phone_number(monkeypatch, capsys):
+    monkeypatch.setenv("WA_MODE", "dry_run")
+    assert send(template_payload("919999990123", ["a", "b", "c", "d"], name="t", lang="en")) == "dry-run"
+    out = capsys.readouterr().out
+    assert "919999990123" not in out and "***0123" in out
+
+
+def test_ingest_lookback_defaults_to_three_hours_and_caps_backfills(monkeypatch):
+    monkeypatch.delenv("LOOKBACK_HOURS", raising=False)
+    assert lookback_hours({}) == 3 and lookback_hours(None) == 3
+    assert lookback_hours({"lookback_hours": 48}) == 48
+    assert lookback_hours({"lookback_hours": 500}) == 72

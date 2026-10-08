@@ -47,8 +47,9 @@ def send(payload: dict) -> str:
         )
         with urllib.request.urlopen(req, timeout=20) as r:
             return json.load(r)["messages"][0]["id"]
-    if mode == "dry_run":
-        print(json.dumps({"dry_run_payload": payload}, ensure_ascii=False))
+    if mode == "dry_run":  # the log keeps only the number's last four digits
+        shown = {**payload, "to": "***" + str(payload.get("to", ""))[-4:]}
+        print(json.dumps({"dry_run_payload": shown}, ensure_ascii=False))
         return "dry-run"
     raise ValueError(f"unknown WA_MODE {mode!r}")
 

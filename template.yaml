@@ -103,6 +103,7 @@ Resources:
           Type: ScheduleV2
           Properties:
             ScheduleExpression: cron(10 * * * ? *)
+            ScheduleExpressionTimezone: Asia/Kolkata
 
   ForecastFunction:
     Type: AWS::Serverless::Function
@@ -203,10 +204,13 @@ Resources:
     Properties:
       DefinitionUri: statemachine/daily.asl.json
       DefinitionSubstitutions:
+        IngestFunctionArn: !GetAtt IngestFunction.Arn
         ForecastFunctionArn: !GetAtt ForecastFunction.Arn
         DecideFunctionArn: !GetAtt DecideFunction.Arn
         SendFunctionArn: !GetAtt SendFunction.Arn
       Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref IngestFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref ForecastFunction
         - LambdaInvokePolicy:
