@@ -144,7 +144,9 @@ a health outcome.
 - **Partial school list.** OpenStreetMap has 1,110 of Delhi's schools. The government's UDISE+ register would
   cover them all.
 - **Late readings.** Delhi's readings often arrive late through OpenAQ, and on those mornings ClearHour falls
-  back as described above. A direct CPCB feed would fix that.
+  back as described above. A direct CPCB feed would fix that. When only some monitors are late, the morning run
+  currently covers only the schools near the on-time ones (67 of 1,110 on 10 Oct 2026); judging staleness per
+  monitor is the next fix.
 - **One city, one season.** The model is trained on Delhi NCR from October to February.
 
 ## Run it
