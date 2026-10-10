@@ -1,17 +1,16 @@
 """Inbound Lambda (SNS from End User Messaging Social): a principal's reply.
 
-"1" (or "१", "done") marks today's alert as acted on; anything else gets a short help reply. Replies are
-free-form text, allowed because the principal has just messaged us (WhatsApp's 24-hour window).
+"1" (or "१", "done") marks the alert sent in the last 24 hours, a replay included, as acted on; anything else
+gets a short help reply. Replies are free-form text, allowed because the principal has just messaged us
+(WhatsApp's 24-hour window).
 """
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
-from zoneinfo import ZoneInfo
+from datetime import UTC, datetime, timedelta
 
 from clearhour import site, store, whatsapp
 
-IST = ZoneInfo("Asia/Kolkata")
 YES = {"1", "1.", "१", "done", "ok 1", "हो गया"}
 
 REPLIES = {
@@ -31,6 +30,13 @@ REPLIES = {
 UNKNOWN = "This number isn't registered with ClearHour yet."
 
 
+def answered_day(school_id: str, now: datetime) -> str | None:
+    """The alert a "1" answers: the one sent most recently, within the last 24 hours."""
+    since = (now - timedelta(hours=24)).isoformat(timespec="seconds")
+    sent = [a for a in site.recent_alerts(school_id) if a.get("sent_at", "") >= since]
+    return max(sent, key=lambda a: a["sent_at"])["sk"].split("#", 1)[1] if sent else None
+
+
 def handler(event, context):
     handled = 0
     for msg in whatsapp.parse_sns(event):
@@ -41,8 +47,9 @@ def handler(event, context):
         school_id = profile["pk"].split("#", 1)[1]
         text = REPLIES.get(profile.get("lang", "en"), REPLIES["en"])
         if msg["text"].lower() in YES:
-            today = datetime.now(IST).date().isoformat()
-            acted = store.mark_acted(school_id, today, datetime.now(UTC).isoformat(timespec="seconds"))
+            now = datetime.now(UTC)
+            day = answered_day(school_id, now)
+            acted = day is not None and store.mark_acted(school_id, day, now.isoformat(timespec="seconds"))
             body = text["thanks"].format(name=profile["name"]) if acted else text["no_alert"]
             if acted:
                 site.publish_alerts_quietly()

@@ -118,7 +118,7 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     assert decide.handler(out, None)["alerts"] == []  # a re-run doesn't queue it again
 
     today = datetime.now(IST).date().isoformat()
-    store.put_alert_if_new("node/1", today, {"params": ["a", "b", "c", "d"]})
+    store.put_alert_if_new("node/1", today, {"params": ["a", "b", "c", "d"]})  # queued, not sent yet
     entry = {
         "changes": [
             {"value": {"messages": [{"from": "919999999999", "id": "w", "type": "text", "text": {"body": "१"}}]}}
@@ -126,9 +126,10 @@ def test_forecast_decide_send_reply(aws, monkeypatch):
     }
     event = {"Records": [{"Sns": {"Message": json.dumps({"whatsAppWebhookEntry": json.dumps(entry)})}}]}
     assert inbound.handler(event, None) == {"handled": 1}
-    assert store.get_alert("node/1", today)["acted"] is True
+    assert store.get_alert("node/1", "2025-11-13")["acted"] is True  # the reply answers the alert it got, not today's
+    assert "acted" not in store.get_alert("node/1", today)
     alerts = json.loads(boto3.client("s3").get_object(Bucket=BUCKET, Key="site/data/alerts.json")["Body"].read())
-    assert alerts["days"][today][0]["acted"] is True
+    assert alerts["days"]["2025-11-13"][0]["acted"] is True
 
 
 def test_stale_readings_still_forecast_but_leave_assembly_to_the_forecast(aws, monkeypatch):
