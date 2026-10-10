@@ -34,6 +34,8 @@ in between: on any school morning, it tells each principal which hour is cleanes
 The same alert goes out in Hindi for schools that choose it. When the principal replies **1**, the school is
 marked as acted on, and the dashboard shows it within about 20 seconds.
 
+![The real alert on WhatsApp (the 13 Nov 2025 replay, sent on 10 Oct 2026), the reply 1 and the thank-you; the business number is hidden](outputs/whatsapp_alert.png)
+
 ## Does it work?
 
 We tested the forecast out of sample with a walk-forward backtest over winter 2025–26 (10 Nov to 1 Feb).
