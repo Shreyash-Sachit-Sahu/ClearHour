@@ -127,6 +127,8 @@ never double-sends.
   all under the GRAP school orders) in the chart, README and video. The school layer stays "Delhi schools".
 - WhatsApp: `WA_SEND_AS=text` in `.env` is the fallback while the template is in review. It sends the template's
   exact words as a plain message, which WhatsApp delivers only within 24 hours of the recipient's own last message.
+  Once the template is approved, set `WA_SEND_AS=template`, not empty: `deploy.sh` skips empty values, so
+  CloudFormation would keep `text`.
 
 ## Commands
 
