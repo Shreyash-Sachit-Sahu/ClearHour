@@ -194,6 +194,7 @@ uv run --env-file .env scripts/seed_pilots.py       # the demo schools' profiles
 - **Claude** (claude.ai) for the architecture, the analysis plan and the build briefs, all in
   [docs/briefs/](docs/briefs/).
 - **Claude Code** for the implementation, tests, data pulls and deploys.
+- **Amazon Polly** (generative voice "Kajal") for the demo video's narration; everything on screen is a real recording.
 
 ## License
 
