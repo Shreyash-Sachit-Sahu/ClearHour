@@ -10,6 +10,7 @@ own phone; no school has signed up yet. The dashboard shows each morning's run, 
 of 13 Nov 2025, a smoggy winter day.
 
 **Dashboard:** https://rshczjirhol3xg3tzbuwhv4txi0ooeac.lambda-url.ap-south-1.on.aws/ · **Video:** https://youtu.be/SEHrDsA_eLM
+· **Blog:** https://builder.aws.com/content/3KWNNwakMioYpdF8joYpdgA0hjp/clearhour-telling-every-delhi-school-its-cleanest-hour-on-aws
 
 Built solo for Environmental Hacks (Bharat Builds Tour, WeMakeDevs × AWS), Air track.
 
