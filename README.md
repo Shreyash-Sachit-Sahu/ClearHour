@@ -5,11 +5,12 @@ PM2.5 hour by hour across Delhi. Within minutes it sends each subscribed princip
 Hindi or English. The message says which school hour has the cleanest air, whether to hold assembly indoors,
 or that there is no safe window today.
 
-This is a working demo. One real Delhi school is set up as a recipient, and its alerts go to the builder's
-own phone; no school has signed up yet. The dashboard shows each morning's run, updated at 5:30, and a replay
-of 13 Nov 2025, a smoggy winter day.
+This was a working demo, live on AWS from 8 Oct to 2 Nov 2026 and now taken down. One real Delhi school was
+set up as a recipient, with its alerts going to the builder's own phone; no school signed up. The dashboard
+showed each morning's run, updated at 5:30, and a replay of 13 Nov 2025, a smoggy winter day. The video shows
+it all running, and `scripts/deploy.sh` redeploys it.
 
-**Dashboard:** https://rshczjirhol3xg3tzbuwhv4txi0ooeac.lambda-url.ap-south-1.on.aws/ · **Video:** https://youtu.be/SEHrDsA_eLM
+**Dashboard:** offline since 2 Nov 2026 (the stack was deleted) · **Video:** https://youtu.be/SEHrDsA_eLM
 · **Blog:** https://builder.aws.com/content/3KWNNwakMioYpdF8joYpdgA0hjp/clearhour-telling-every-delhi-school-its-cleanest-hour-on-aws
 
 Built solo for Environmental Hacks (Bharat Builds Tour, WeMakeDevs × AWS), Air track.
